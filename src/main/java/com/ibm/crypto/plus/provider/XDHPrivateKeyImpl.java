@@ -144,9 +144,11 @@ final class XDHPrivateKeyImpl extends PKCS8Key implements XECPrivateKey, Seriali
             k = scalar.get();
         try {
             if (k == null) {
+                System.out.println("AAAAAAA");
                 int keySize = CurveUtil.getCurveSize(curve);
                 this.xecKey = XECKey.generateKeyPair(provider.getOCKContext(), this.curve.ordinal(), keySize);
             } else {
+                System.out.println("BBBBBBB");
                 this.algid = CurveUtil.getAlgId(this.params.getName());
                 byte[] der = buildOCKPrivateKeyBytes();
                 int encodingSize = CurveUtil.getDEREncodingSize(curve);
