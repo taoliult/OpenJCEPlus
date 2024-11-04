@@ -102,6 +102,16 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
         if (debug != null) {
             debug.println("New OpenJCEPlusFIPS instance");
         }
+
+        if (!isPlatformSupported) {
+            // Return null instance 
+            // instance = null;
+            // return;
+
+            // Or throw error message
+            throw new ProviderException("OpenJCEPlusFIPS is not supported on the non FIPS platforms");
+        }
+
         final OpenJCEPlusProvider jce = this;
 
         AccessController.doPrivileged(new java.security.PrivilegedAction() {
