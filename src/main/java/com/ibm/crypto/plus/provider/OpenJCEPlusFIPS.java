@@ -67,12 +67,37 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
     private static boolean ockInitialized = false;
     private static OCKContext ockContext;
 
+    private static final boolean isPlatformSupported;
+    private static final List<String> supportedPlatforms = List.of("Linux-amd64", "Linux-s390x",
+            "Linux-ppc64le", "Windows-amd64", "AIX-ppc64");
+
+    static {
+        String osName = System.getProperty("os.name");
+        String osArch = System.getProperty("os.arch");;
+        String currentPlatform = osName + '-' + osArch;
+        
+        if (supportedPlatforms.contains(currentPlatform)) {
+            isPlatformSupported = true;
+        } else {
+            isPlatformSupported = false;
+        }
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     public OpenJCEPlusFIPS() {
         super("OpenJCEPlusFIPS", info);
         if (debug != null) {
             debug.println("New OpenJCEPlusFIPS instance");
         }
+
+        if (!isPlatformSupported) {
+            // Print out the exception but not exit.
+            new ProviderException("OpenJCEPlusFIPS is not supported on this non FIPS platform").printStackTrace();
+
+            instance = null;
+            return;
+        }
+
         final OpenJCEPlusProvider jce = this;
 
         AccessController.doPrivileged(new java.security.PrivilegedAction() {
