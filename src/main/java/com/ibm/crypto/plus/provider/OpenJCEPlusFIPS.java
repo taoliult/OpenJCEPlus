@@ -131,7 +131,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
             }
         });
 
-        if (instance == null && isPlatformSupported) {
+        if (instance == null) {
             instance = this;
         }
 
