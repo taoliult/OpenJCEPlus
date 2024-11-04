@@ -16,10 +16,12 @@ import java.security.InvalidParameterException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PrivilegedAction;
 import java.security.Provider;
 import java.security.ProviderException;
 import java.security.PublicKey;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.crypto.SecretKey;
@@ -67,6 +69,33 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
     private static boolean ockInitialized = false;
     private static OCKContext ockContext;
 
+    private static final boolean isPlatformSupported;
+    private static final Map<String, List<String>> supportedPlatforms = new HashMap<>();
+
+    static {
+        supportedPlatforms.put("Arch", List.of("amd64", "ppc64", "s390x"));
+        supportedPlatforms.put("OS", List.of("Linux", "AIX", "Windows"));
+
+        String osName = System.getProperty("os.name");
+        String osArch = System.getProperty("os.arch");;
+
+        boolean isOsSupported, isArchSupported;
+        // Check whether the OpenJCEPlus FIPS is supported.
+        isOsSupported = false;
+        for (String os: supportedPlatforms.get("OS")) {
+            if (osName.contains(os)) {
+                isOsSupported = true;
+            }
+        }
+        isArchSupported = false;
+        for (String arch: supportedPlatforms.get("Arch")) {
+            if (osArch.contains(arch)) {
+                isArchSupported = true;
+            }
+        }
+        isPlatformSupported = isOsSupported && isArchSupported;
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     public OpenJCEPlusFIPS() {
         super("OpenJCEPlusFIPS", info);
@@ -92,7 +121,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
             }
         });
 
-        if (instance == null) {
+        if (instance == null && isPlatformSupported) {
             instance = this;
         }
 
