@@ -109,7 +109,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
             // return;
 
             // Or throw error message
-            throw new ProviderException("OpenJCEPlusFIPS is not supported on the non FIPS platforms");
+            throw new ProviderException("OpenJCEPlusFIPS is not supported on this non FIPS platform");
         }
 
         final OpenJCEPlusProvider jce = this;
