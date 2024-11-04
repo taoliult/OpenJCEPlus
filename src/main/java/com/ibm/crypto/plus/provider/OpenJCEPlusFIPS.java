@@ -73,7 +73,8 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
 
     static {
         supportedPlatforms.put("Arch", List.of("amd64", "ppc64", "s390x"));
-        supportedPlatforms.put("OS", List.of("Linux", "AIX", "Windows"));
+        //supportedPlatforms.put("OS", List.of("Linux", "AIX", "Windows"));
+        supportedPlatforms.put("OS", List.of("AIX", "Windows"));
 
         String osName = System.getProperty("os.name");
         String osArch = System.getProperty("os.arch");;
