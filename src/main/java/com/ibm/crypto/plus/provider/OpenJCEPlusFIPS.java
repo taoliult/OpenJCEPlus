@@ -75,7 +75,7 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
 
     static {
         supportedPlatforms.put("Arch", List.of("amd64", "ppc64", "s390x"));
-        supportedPlatforms.put("OS", List.of("Linux", "AIX", "Windows"));
+        supportedPlatforms.put("OS", List.of("AIX", "Windows"));
 
         osName = System.getProperty("os.name");
         osArch = System.getProperty("os.arch");;
@@ -107,13 +107,8 @@ public final class OpenJCEPlusFIPS extends OpenJCEPlusProvider {
         }
 
         if (!isPlatformSupported) {
-            // Print out the exception but not exit.
-            new ProviderException(
-                    "OpenJCEPlusFIPS is not supported on this non FIPS " + osName + " " + osArch + " platform")
-                    .printStackTrace();
-
-            instance = null;
-            return;
+            throw new UnsupportedOperationException(
+                        "OpenJCEPlusFIPS is not supported on this non FIPS " + osName + " " + osArch + " platform");
         }
 
         final OpenJCEPlusProvider jce = this;
