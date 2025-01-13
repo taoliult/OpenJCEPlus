@@ -30,10 +30,6 @@ import javax.crypto.spec.DHPublicKeySpec;
 public final class DHKeyFactory extends KeyFactorySpi {
 
     private OpenJCEPlusProvider provider;
-    public final static int MIN_KEYSIZE_NONFIPS = 512;
-    public final static int MAX_KEYSIZE_NONFIPS = 8192;
-    public final static int MIN_KEYSIZE_FIPS = 2048;
-    public final static int MAX_KEYSIZE_FIPS = 8192;
 
     static DHKey toDHKey(OpenJCEPlusProvider provider, Key key) throws InvalidKeyException {
         return (DHKey) new DHKeyFactory(provider).engineTranslateKey(key);
