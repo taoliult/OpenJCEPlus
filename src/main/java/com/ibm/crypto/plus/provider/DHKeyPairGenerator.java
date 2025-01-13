@@ -71,11 +71,11 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
     private void initialize(int keySize, boolean genParams, java.security.SecureRandom random) {
 
         if (provider.isFIPS()) {
-            DHKeyFactory.checkKeyLengths(keySize, DHKeyFactory.MIN_KEYSIZE_FIPS,
-                    DHKeyFactory.MAX_KEYSIZE_FIPS);
+            checkKeySize(keySize, DHKeyFactory.MIN_KEYSIZE_FIPS,
+                    DHKeyFactory.MAX_KEYSIZE_FIPS, 0);
         } else {
-            DHKeyFactory.checkKeyLengths(keySize, DHKeyFactory.MIN_KEYSIZE_NONFIPS,
-                    DHKeyFactory.MAX_KEYSIZE_NONFIPS);
+            checkKeySize(keySize, DHKeyFactory.MIN_KEYSIZE_NONFIPS,
+                    DHKeyFactory.MAX_KEYSIZE_NONFIPS, 0);
         }
 
         if (genParams) {
@@ -116,11 +116,11 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
             throws InvalidParameterException {
         int keySize = params.getP().bitLength();
         if (provider.isFIPS()) {
-            DHKeyFactory.checkKeyLengths(keySize, DHKeyFactory.MIN_KEYSIZE_FIPS,
-                    DHKeyFactory.MAX_KEYSIZE_FIPS);
+            checkKeySize(keySize, DHKeyFactory.MIN_KEYSIZE_FIPS,
+                    DHKeyFactory.MAX_KEYSIZE_FIPS, params.getL());
         } else {
-            DHKeyFactory.checkKeyLengths(keySize, DHKeyFactory.MIN_KEYSIZE_NONFIPS,
-                    DHKeyFactory.MAX_KEYSIZE_NONFIPS);
+            checkKeySize(keySize, DHKeyFactory.MIN_KEYSIZE_NONFIPS,
+                    DHKeyFactory.MAX_KEYSIZE_NONFIPS, params.getL());
         }
         this.keySize = keySize;
         this.params = params;
