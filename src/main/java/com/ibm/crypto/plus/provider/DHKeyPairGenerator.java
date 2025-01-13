@@ -12,6 +12,7 @@ import com.ibm.crypto.plus.provider.ock.DHKey;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGeneratorSpi;
@@ -27,7 +28,6 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
 
     public DHKeyPairGenerator(OpenJCEPlusProvider provider) {
 
-
         if (!OpenJCEPlusProvider.verifySelfIntegrity(this)) {
             throw new SecurityException("Integrity check failed for: " + provider.getName());
         }
@@ -37,15 +37,14 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
 
     }
 
-
     /**
      * Initialize the receiver to use a given secure random generator, and
      * generate keys of a certain size.
      *
      * @param keySize
-     *            int New size of keys, in bits
+     *                int New size of keys, in bits
      * @param random
-     *            SecureRandom New secure random to use
+     *                SecureRandom New secure random to use
      */
     @Override
     public void initialize(int keySize, SecureRandom random) throws InvalidParameterException {
@@ -58,14 +57,15 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
      * parameters.
      *
      * @param keySize
-     *            int the modulus length, in bits. Valid values are any multiple
-     *            of 8 between 512 and 8192, inclusive.
+     *                  int the modulus length, in bits. Valid values are any
+     *                  multiple
+     *                  of 8 between 512 and 8192, inclusive.
      * @param genParams
-     *            boolean whether or not to generate new parameters for the
-     *            modulus length requested.
+     *                  boolean whether or not to generate new parameters for the
+     *                  modulus length requested.
      * @param random
-     *            SecureRandom the random bit source to use to generate key
-     *            bits.
+     *                  SecureRandom the random bit source to use to generate key
+     *                  bits.
      *
      */
     private void initialize(int keySize, boolean genParams, java.security.SecureRandom random) {
@@ -165,6 +165,40 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
             return new KeyPair(pubKey, privKey);
         } catch (Exception e) {
             throw provider.providerException("Failure in generateKeyPair", e);
+        }
+    }
+
+    /**
+     * Check the length of an DH key modulus/exponent to make sure it is not
+     * too short or long. Some impls have their own min and max key sizes that
+     * may or may not match with a system defined value.
+     *
+     * @param keySize
+     *                the bit length of the modulus.
+     * @param minSize
+     *                the minimum length of the modulus.
+     * @param maxSize
+     *                the maximum length of the modulus.
+     * @param expSize
+     *                the bit length of the exponent.
+     *
+     * @throws InvalidKeyException
+     *                             if any of the values are unacceptable.
+     */
+    static void checkKeySize(int keySize, int minSize, int maxSize, int expSize)
+            throws InvalidParameterException {
+
+        if ((keySize < minSize) || (keySize > maxSize) || ((keySize & 0x3F) != 0)) {
+            throw new InvalidParameterException(
+                    "DH key size must be multiple of 64, and can only range " +
+                            "from 512 to 8192 (inclusive). " +
+                            "The specific key size " + keySize + " is not supported");
+        }
+
+        // optional, could be 0 if not specified
+        if ((expSize < 0) || (expSize > keySize)) {
+            throw new InvalidParameterException("Exponent size must be positive and no larger than" +
+                    " modulus size");
         }
     }
 
