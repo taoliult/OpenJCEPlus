@@ -225,35 +225,4 @@ public final class DHKeyFactory extends KeyFactorySpi {
             throw new InvalidKeyException("Cannot translate key", e);
         }
     }
-
-    /**
-     * Check the length of an RSA key modulus/exponent to make sure it is not
-     * too short or long. Some impls have their own min and max key sizes that
-     * may or may not match with a system defined value.
-     *
-     * @param modulusLen
-     *            the bit length of the RSA modulus.
-     * @param exponent
-     *            the RSA exponent
-     * @param minModulusLen
-     *            if > 0, check to see if modulusLen is at least this long,
-     *            otherwise unused.
-     * @param maxModulusLen
-     *            caller will allow this max number of bits. Allow the smaller
-     *            of the system-defined maximum and this param.
-     *
-     * @throws InvalidKeyException
-     *             if any of the values are unacceptable.
-     */
-    static void checkKeyLengths(int keysize, int minsize, int maxsize)
-            throws InvalidParameterException {
-
-        if ((keysize < minsize) || (keysize > maxsize) || ((keysize & 0x3F) != 0)) {
-            throw new InvalidParameterException(
-                    "DH key size must be multiple of 64, and can only range "
-                            + "from 512 to 8192 (inclusive). " + "The specific key size " + keysize
-                            + " is not supported");
-        }
-    }
-
 }
