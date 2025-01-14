@@ -47,9 +47,9 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
      * generate keys of a certain size.
      *
      * @param keySize
-     *                int New size of keys, in bits
+     *            int New size of keys, in bits
      * @param random
-     *                SecureRandom New secure random to use
+     *            SecureRandom New secure random to use
      */
     @Override
     public void initialize(int keySize, SecureRandom random) throws InvalidParameterException {
@@ -62,15 +62,14 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
      * parameters.
      *
      * @param keySize
-     *                  int the modulus length, in bits. Valid values are any
-     *                  multiple
-     *                  of 8 between 512 and 8192, inclusive.
+     *            int the modulus length, in bits. Valid values are any multiple
+     *            of 8 between 512 and 8192, inclusive.
      * @param genParams
-     *                  boolean whether or not to generate new parameters for the
-     *                  modulus length requested.
+     *            boolean whether or not to generate new parameters for the
+     *            modulus length requested.
      * @param random
-     *                  SecureRandom the random bit source to use to generate key
-     *                  bits.
+     *            SecureRandom the random bit source to use to generate key
+     *            bits.
      *
      */
     private void initialize(int keySize, boolean genParams, java.security.SecureRandom random) {
