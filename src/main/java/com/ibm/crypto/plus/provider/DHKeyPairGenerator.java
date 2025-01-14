@@ -12,7 +12,6 @@ import com.ibm.crypto.plus.provider.ock.DHKey;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGeneratorSpi;
@@ -182,7 +181,7 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
      * @param expSize
      *                the bit length of the exponent.
      *
-     * @throws InvalidKeyException
+     * @throws InvalidParameterException
      *                             if any of the values are unacceptable.
      */
     static void checkKeySize(int keySize, int minSize, int maxSize, int expSize)
