@@ -10,7 +10,6 @@ package com.ibm.crypto.plus.provider;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
-import java.security.InvalidParameterException;
 import java.security.Key;
 import java.security.KeyFactorySpi;
 import java.security.PrivateKey;
