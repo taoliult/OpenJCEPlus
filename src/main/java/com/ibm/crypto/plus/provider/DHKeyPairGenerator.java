@@ -190,7 +190,7 @@ public final class DHKeyPairGenerator extends KeyPairGeneratorSpi {
         if ((keySize < minSize) || (keySize > maxSize) || ((keySize & 0x3F) != 0)) {
             throw new InvalidParameterException(
                     "DH key size must be multiple of 64, and can only range " +
-                            "from 512 to 8192 (inclusive). " +
+                            "from " + minSize + " to " + maxSize + " (inclusive). " +
                             "The specific key size " + keySize + " is not supported");
         }
 
