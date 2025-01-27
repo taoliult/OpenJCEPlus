@@ -819,7 +819,7 @@ public class BaseTestAES extends BaseTestCipher {
 
     {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
-        System.out.println("encryptDecryptDoFinal - Provider Name: " + cp.getProvider().getName());
+        //System.out.println("encryptDecryptDoFinal - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -863,7 +863,7 @@ public class BaseTestAES extends BaseTestCipher {
     protected void encryptDecryptUpdate(String algorithm, boolean requireLengthMultipleBlockSize,
             AlgorithmParameters algParams, byte[] message) throws Exception {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
-        System.out.println("encryptDecryptUpdate - Provider Name: " + cp.getProvider().getName());
+        //System.out.println("encryptDecryptUpdate - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -912,7 +912,7 @@ public class BaseTestAES extends BaseTestCipher {
             boolean requireLengthMultipleBlockSize, AlgorithmParameters algParams, byte[] message)
             throws Exception {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
-        System.out.println("encryptDecryptPartialUpdate - Provider Name: " + cp.getProvider().getName());
+        //System.out.println("encryptDecryptPartialUpdate - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -965,7 +965,7 @@ public class BaseTestAES extends BaseTestCipher {
 
     {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
-        System.out.println("encryptDecryptReuseObject - Provider Name: " + cp.getProvider().getName());
+        //System.out.println("encryptDecryptReuseObject - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -1015,7 +1015,7 @@ public class BaseTestAES extends BaseTestCipher {
 
     {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
-        System.out.println("encryptDecryptDoFinalCopySafe - Provider Name: " + cp.getProvider().getName());
+        //System.out.println("encryptDecryptDoFinalCopySafe - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -1066,7 +1066,7 @@ public class BaseTestAES extends BaseTestCipher {
 
     {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
-        System.out.println("encryptDecryptUpdateCopySafe - Provider Name: " + cp.getProvider().getName());
+        //System.out.println("encryptDecryptUpdateCopySafe - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
