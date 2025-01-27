@@ -258,13 +258,13 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_ECB_NoPadding() throws Exception {
         System.out.println("Tao Debug 20");
         encryptDecrypt("AES/ECB/NoPadding", true, false);
     }
 
-    // @RepeatedTest(1000)
+    @RepeatedTest(1000)
     public void testAES_ECB_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 21");
         encryptDecrypt("AES/ECB/PKCS5Padding");
