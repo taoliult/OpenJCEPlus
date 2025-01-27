@@ -158,9 +158,8 @@ public class TestMultithreadFIPS {
 
     @AfterAll
     public void afterall() throws Exception {
-        // System.out.println("Now sleeping with PID: " +
-        // ProcessHandle.current().pid());
-        // Thread.sleep(100000000);
+        System.out.println("Now sleeping with PID: " + ProcessHandle.current().pid());
+        Thread.sleep(100000000);
     }
 
     @Test
