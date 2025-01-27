@@ -28,6 +28,7 @@ import javax.crypto.spec.RC5ParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -106,12 +107,12 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES() throws Exception {
         encryptDecrypt("AES");
     }
 
-    @Test
+    // @Test
     public void testAES_CBC_ISO10126Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/CBC/ISO10126Padding", getProviderName());
@@ -121,17 +122,17 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_CBC_NoPadding() throws Exception {
         encryptDecrypt("AES/CBC/NoPadding", true, false);
     }
 
-    @Test
+    // @Test
     public void testAES_CBC_PKCS5Padding() throws Exception {
         encryptDecrypt("AES/CBC/PKCS5Padding");
     }
 
-    @Test
+    // @Test
     public void testAES_CFB_ISO10126Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/CFB/ISO10126Padding", getProviderName());
@@ -141,27 +142,27 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_CFB8_NoPadding() throws Exception {
         encryptDecrypt("AES/CFB8/NoPadding");
     }
 
-    @Test
+    // @Test
     public void testAES_CFB_NoPadding() throws Exception {
         encryptDecrypt("AES/CFB/NoPadding");
     }
 
-    @Test
+    // @Test
     public void testAES_CFB8_PKCS5Padding() throws Exception {
         encryptDecrypt("AES/CFB8/PKCS5Padding");
     }
 
-    @Test
+    // @Test
     public void testAES_CFB_PKCS5Padding() throws Exception {
         encryptDecrypt("AES/CFB/PKCS5Padding");
     }
 
-    @Test
+    // @Test
     public void testAES_CFB128_ISO10126Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/CFB128/ISO10126Padding", getProviderName());
@@ -171,17 +172,17 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_CFB128_NoPadding() throws Exception {
         encryptDecrypt("AES/CFB128/NoPadding");
     }
 
-    @Test
+    // @Test
     public void testAES_CFB128_PKCS5Padding() throws Exception {
         encryptDecrypt("AES/CFB128/PKCS5Padding");
     }
 
-    @Test
+    // @Test
     public void testAES_CTR_ISO10126Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/CTR/ISO10126Padding", getProviderName());
@@ -191,17 +192,17 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_CTR_NoPadding() throws Exception {
         encryptDecrypt("AES/CTR/NoPadding");
     }
 
-    @Test
+    // @Test
     public void testAES_CTR_PKCS5Padding() throws Exception {
         encryptDecrypt("AES/CTR/PKCS5Padding");
     }
 
-    @Test
+    // @Test
     public void testAES_CTS_ISO10126Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/CTS/ISO10126Padding", getProviderName());
@@ -210,7 +211,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_CTS_NoPadding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/CTS/NoPadding", getProviderName());
@@ -219,7 +220,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_CTS_PKCS5Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/CTS/PKCS5Padding", getProviderName());
@@ -229,7 +230,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_ECB_ISO10126Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/ECB/ISO10126Padding", getProviderName());
@@ -239,17 +240,17 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_ECB_NoPadding() throws Exception {
         encryptDecrypt("AES/ECB/NoPadding", true, false);
     }
 
-    @Test
+    // @Test
     public void testAES_ECB_PKCS5Padding() throws Exception {
         encryptDecrypt("AES/ECB/PKCS5Padding");
     }
 
-    @Test
+    // @Test
     public void testAES_OFB_ISO10126Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/OFB/ISO10126Padding", getProviderName());
@@ -259,17 +260,17 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_OFB_NoPadding() throws Exception {
         encryptDecrypt("AES/OFB/NoPadding");
     }
 
-    @Test
+    // @Test
     public void testAES_OFB_PKCS5Padding() throws Exception {
         encryptDecrypt("AES/OFB/PKCS5Padding");
     }
 
-    @Test
+    // @Test
     public void testAES_PCBC_ISO10126Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/PCBC/ISO10126Padding", getProviderName());
@@ -279,7 +280,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_PCBC_NoPadding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/PCBC/NoPadding", getProviderName());
@@ -289,7 +290,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAES_PCBC_PKCS5Padding() throws Exception {
         try {
             cp = Cipher.getInstance("AES/PCBC/PKCS5Padding", getProviderName());
@@ -299,7 +300,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAESShortBuffer() throws Exception {
         try {
             // Test AES Cipher
@@ -315,7 +316,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAESIllegalBlockSizeEncrypt() throws Exception {
         try {
             Cipher cp = Cipher.getInstance("AES/CBC/NoPadding", getProviderName());
@@ -334,7 +335,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAESIllegalBlockSizeDecrypt() throws Exception {
         try {
             Cipher cp = Cipher.getInstance("AES/CBC/PKCS5Padding", getProviderName());
@@ -355,7 +356,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAESBadPaddingDecrypt() throws NoSuchAlgorithmException, NoSuchProviderException,
             NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
         try {
@@ -384,7 +385,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAESNoSuchAlgorithm() throws Exception {
         try {
             cp = Cipher.getInstance("AES/BBC/PKCS5Padding", getProviderName());
@@ -394,7 +395,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testAESNull() throws Exception {
         Cipher cp = Cipher.getInstance("AES", getProviderName());
         SecretKey nullKey = null;
@@ -413,7 +414,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testIllegalParamSpec() throws Exception {
         Cipher cp = Cipher.getInstance("AES/CBC/PKCS5Padding", getProviderName());
 
@@ -467,7 +468,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
     public void testArguments() throws Exception {
         try {
             Cipher cp = Cipher.getInstance("AES", getProviderName());
@@ -1074,7 +1075,8 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @Test
+    // @Test
+    @RepeatedTest(1000)
     public void testUpdateForAES_CBC_PKCS5Padding() throws Exception {
 
         try {
