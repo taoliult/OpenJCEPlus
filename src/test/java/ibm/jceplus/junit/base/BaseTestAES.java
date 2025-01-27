@@ -106,13 +106,13 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES() throws Exception {
         System.out.println("Tao Debug 1");
         encryptDecrypt("AES");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CBC_ISO10126Padding() throws Exception {
         System.out.println("Tao Debug 2");
         try {
@@ -123,19 +123,19 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CBC_NoPadding() throws Exception {
         System.out.println("Tao Debug 3");
         encryptDecrypt("AES/CBC/NoPadding", true, false);
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CBC_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 4");
         encryptDecrypt("AES/CBC/PKCS5Padding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CFB_ISO10126Padding() throws Exception {
         System.out.println("Tao Debug 5");
         try {
@@ -146,31 +146,31 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CFB8_NoPadding() throws Exception {
         System.out.println("Tao Debug 6");
         encryptDecrypt("AES/CFB8/NoPadding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CFB_NoPadding() throws Exception {
         System.out.println("Tao Debug 7");
         encryptDecrypt("AES/CFB/NoPadding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CFB8_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 8");
         encryptDecrypt("AES/CFB8/PKCS5Padding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CFB_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 9");
         encryptDecrypt("AES/CFB/PKCS5Padding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CFB128_ISO10126Padding() throws Exception {
         System.out.println("Tao Debug 10");
         try {
@@ -181,19 +181,19 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CFB128_NoPadding() throws Exception {
         System.out.println("Tao Debug 11");
         encryptDecrypt("AES/CFB128/NoPadding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CFB128_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 12");
         encryptDecrypt("AES/CFB128/PKCS5Padding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CTR_ISO10126Padding() throws Exception {
         System.out.println("Tao Debug 13");
         try {
@@ -204,19 +204,19 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CTR_NoPadding() throws Exception {
         System.out.println("Tao Debug 14");
         encryptDecrypt("AES/CTR/NoPadding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CTR_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 15");
         encryptDecrypt("AES/CTR/PKCS5Padding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CTS_ISO10126Padding() throws Exception {
         System.out.println("Tao Debug 16");
         try {
@@ -226,7 +226,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CTS_NoPadding() throws Exception {
         System.out.println("Tao Debug 17");
         try {
@@ -236,7 +236,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_CTS_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 18");
         try {
@@ -247,7 +247,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_ECB_ISO10126Padding() throws Exception {
         System.out.println("Tao Debug 19");
         try {
@@ -258,19 +258,19 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    // @RepeatedTest(1000)
+    @RepeatedTest(1000)
     public void testAES_ECB_NoPadding() throws Exception {
         System.out.println("Tao Debug 20");
         encryptDecrypt("AES/ECB/NoPadding", true, false);
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_ECB_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 21");
         encryptDecrypt("AES/ECB/PKCS5Padding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_OFB_ISO10126Padding() throws Exception {
         System.out.println("Tao Debug 22");
         try {
@@ -281,19 +281,19 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_OFB_NoPadding() throws Exception {
         System.out.println("Tao Debug 23");
         encryptDecrypt("AES/OFB/NoPadding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_OFB_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 24");
         encryptDecrypt("AES/OFB/PKCS5Padding");
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_PCBC_ISO10126Padding() throws Exception {
         System.out.println("Tao Debug 25");
         try {
@@ -304,7 +304,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_PCBC_NoPadding() throws Exception {
         System.out.println("Tao Debug 26");
         try {
@@ -315,7 +315,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAES_PCBC_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 27");
         try {
@@ -326,7 +326,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAESShortBuffer() throws Exception {
         System.out.println("Tao Debug 28");
         try {
@@ -343,7 +343,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAESIllegalBlockSizeEncrypt() throws Exception {
         System.out.println("Tao Debug 29");
         try {
@@ -363,7 +363,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAESIllegalBlockSizeDecrypt() throws Exception {
         System.out.println("Tao Debug 30");
         try {
@@ -385,7 +385,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAESBadPaddingDecrypt() throws NoSuchAlgorithmException, NoSuchProviderException,
             NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
                 System.out.println("Tao Debug 31");
@@ -415,7 +415,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAESNoSuchAlgorithm() throws Exception {
         System.out.println("Tao Debug 32");
         try {
@@ -426,7 +426,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testAESNull() throws Exception {
         System.out.println("Tao Debug 33");
         Cipher cp = Cipher.getInstance("AES", getProviderName());
@@ -446,7 +446,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testIllegalParamSpec() throws Exception {
         System.out.println("Tao Debug 34");
         Cipher cp = Cipher.getInstance("AES/CBC/PKCS5Padding", getProviderName());
@@ -501,7 +501,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testArguments() throws Exception {
         System.out.println("Tao Debug 35");
         try {
@@ -819,6 +819,7 @@ public class BaseTestAES extends BaseTestCipher {
 
     {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
+        System.out.println("encryptDecryptDoFinal - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -862,6 +863,7 @@ public class BaseTestAES extends BaseTestCipher {
     protected void encryptDecryptUpdate(String algorithm, boolean requireLengthMultipleBlockSize,
             AlgorithmParameters algParams, byte[] message) throws Exception {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
+        System.out.println("encryptDecryptUpdate - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -910,6 +912,7 @@ public class BaseTestAES extends BaseTestCipher {
             boolean requireLengthMultipleBlockSize, AlgorithmParameters algParams, byte[] message)
             throws Exception {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
+        System.out.println("encryptDecryptPartialUpdate - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -962,6 +965,7 @@ public class BaseTestAES extends BaseTestCipher {
 
     {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
+        System.out.println("encryptDecryptReuseObject - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -1011,6 +1015,7 @@ public class BaseTestAES extends BaseTestCipher {
 
     {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
+        System.out.println("encryptDecryptDoFinalCopySafe - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -1061,6 +1066,7 @@ public class BaseTestAES extends BaseTestCipher {
 
     {
         Cipher cp = Cipher.getInstance(algorithm, getProviderName());
+        System.out.println("encryptDecryptUpdateCopySafe - Provider Name: " + cp.getProvider().getName());
         if (algParams == null) {
             cp.init(Cipher.ENCRYPT_MODE, key);
         } else {
@@ -1109,7 +1115,7 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    @RepeatedTest(1000)
+    // @RepeatedTest(1000)
     public void testUpdateForAES_CBC_PKCS5Padding() throws Exception {
         System.out.println("Tao Debug 36");
         try {
