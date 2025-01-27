@@ -28,7 +28,7 @@ import javax.crypto.spec.RC5ParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -1074,8 +1074,8 @@ public class BaseTestAES extends BaseTestCipher {
         }
     }
 
-    // @Test
-    @RepeatedTest(1000)
+    @Test
+    // @RepeatedTest(1000)
     public void testUpdateForAES_CBC_PKCS5Padding() throws Exception {
 
         try {
