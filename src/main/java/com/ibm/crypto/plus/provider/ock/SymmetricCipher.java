@@ -46,7 +46,7 @@ public final class SymmetricCipher {
     private final static String badIdMsg = "Cipher Identifier is not valid";
     /* private final static String debPrefix = "SymCipher"; Adding Debug causes test cases to fail */
     int paramOffset;
-    FastJNIBuffer parametersBuffer = FastJNIBuffer.create(PARAM_CAP);
+    // FastJNIBuffer parametersBuffer = FastJNIBuffer.create(PARAM_CAP);
     // GSKit code adds 16 to the input buffer length for every Update  and provide a 
     // 16  byte buffer for the Final which has no input data.
     private final int OCK_ENCRYPTION_RESIDUE = 16;
