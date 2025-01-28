@@ -46,7 +46,7 @@ public final class SymmetricCipher {
     private final static String badIdMsg = "Cipher Identifier is not valid";
     /* private final static String debPrefix = "SymCipher"; Adding Debug causes test cases to fail */
     int paramOffset;
-    // FastJNIBuffer parametersBuffer = FastJNIBuffer.create(2);
+    FastJNIBuffer parametersBuffer;
     // GSKit code adds 16 to the input buffer length for every Update  and provide a 
     // 16  byte buffer for the Final which has no input data.
     private final int OCK_ENCRYPTION_RESIDUE = 16;
@@ -184,43 +184,44 @@ public final class SymmetricCipher {
         }
 
 
-        // if (use_z_fast_command) {
-        //     // Calculating pointers/offsets
-        //     // parameters = SymmetricCipher.parametersBuffer.get();
-        //     inputPointer = parametersBuffer.pointer();
-        //     paramOffset = PARAM_CAP - iv.length - key.length;
-        //     paramPointer = parametersBuffer.pointer() + paramOffset;
-        //     outputOffset = paramOffset / 2; // Max output = Max input = (Buffer Capacity - (Key Length + IV Length)) / 2
-        //     outputPointer = parametersBuffer.pointer() + outputOffset;
+        if (use_z_fast_command) {
+            parametersBuffer = FastJNIBuffer.create(PARAM_CAP);
+            // Calculating pointers/offsets
+            // parameters = SymmetricCipher.parametersBuffer.get();
+            inputPointer = parametersBuffer.pointer();
+            paramOffset = PARAM_CAP - iv.length - key.length;
+            paramPointer = parametersBuffer.pointer() + paramOffset;
+            outputOffset = paramOffset / 2; // Max output = Max input = (Buffer Capacity - (Key Length + IV Length)) / 2
+            outputPointer = parametersBuffer.pointer() + outputOffset;
 
-        //     // Adding iv and key to params buffer
-        //     parametersBuffer.put(paramOffset, iv, 0, iv.length);
-        //     parametersBuffer.put(paramOffset + iv.length, key, 0, key.length);
+            // Adding iv and key to params buffer
+            parametersBuffer.put(paramOffset, iv, 0, iv.length);
+            parametersBuffer.put(paramOffset + iv.length, key, 0, key.length);
 
-        //     // Determine mode
-        //     mode = (isEncrypt) ? 0 : 128;
-        //     blockSize = 16;
-        //     switch (key.length) {
-        //         case 8:
-        //             mode += 1;
-        //             break;
-        //         case 16:
-        //             if (blockSize == 8)
-        //                 mode += 2;
-        //             else if (blockSize == 16)
-        //                 mode += 18;
-        //             break;
-        //         case 24:
-        //             if (blockSize == 8)
-        //                 mode += 3;
-        //             else if (blockSize == 16)
-        //                 mode += 19;
-        //             break;
-        //         case 32:
-        //             mode += 20;
-        //             break;
-        //     }
-        // }
+            // Determine mode
+            mode = (isEncrypt) ? 0 : 128;
+            blockSize = 16;
+            switch (key.length) {
+                case 8:
+                    mode += 1;
+                    break;
+                case 16:
+                    if (blockSize == 8)
+                        mode += 2;
+                    else if (blockSize == 16)
+                        mode += 18;
+                    break;
+                case 24:
+                    if (blockSize == 8)
+                        mode += 3;
+                    else if (blockSize == 16)
+                        mode += 19;
+                    break;
+                case 32:
+                    mode += 20;
+                    break;
+            }
+        }
     }
 
     // public synchronized void clean() throws OCKException {
@@ -418,20 +419,20 @@ public final class SymmetricCipher {
             int outputOffset) throws IllegalStateException, ShortBufferException, OCKException {
         int outLen = 0;
 
-        // if (needsReinit) {
-        //     // Resetting iv and key to params buffer
-        //     if (reinitIVAndKey != null)
-        //         parametersBuffer.put(paramOffset, reinitIVAndKey, 0, reinitIVAndKey.length);
-        //     else {
-        //         parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
-        //         parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
-        //                 reinitKey.length);
-        //     }
-        //     needsReinit = false;
-        // }
+        if (needsReinit) {
+            // Resetting iv and key to params buffer
+            if (reinitIVAndKey != null)
+                parametersBuffer.put(paramOffset, reinitIVAndKey, 0, reinitIVAndKey.length);
+            else {
+                parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
+                parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
+                        reinitKey.length);
+            }
+            needsReinit = false;
+        }
 
-        // outLen = NativeInterface.z_kmc_native(input, inputOffset, output, outputOffset,
-        //         paramPointer, inputLen, mode);
+        outLen = NativeInterface.z_kmc_native(input, inputOffset, output, outputOffset,
+                paramPointer, inputLen, mode);
         return outLen;
     }
 
@@ -559,17 +560,17 @@ public final class SymmetricCipher {
 
         int outLen = 0;
 
-        // if (needsReinit) {
-        //     // Resetting iv and key to params buffer
-        //     if (reinitIVAndKey != null)
-        //         parametersBuffer.put(paramOffset, reinitIVAndKey, 0, reinitIVAndKey.length);
-        //     else {
-        //         parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
-        //         parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
-        //                 reinitKey.length);
-        //     }
-        //     needsReinit = false;
-        // }
+        if (needsReinit) {
+            // Resetting iv and key to params buffer
+            if (reinitIVAndKey != null)
+                parametersBuffer.put(paramOffset, reinitIVAndKey, 0, reinitIVAndKey.length);
+            else {
+                parametersBuffer.put(paramOffset, this.reinitIV, 0, reinitIV.length);
+                parametersBuffer.put(paramOffset + reinitIV.length, this.reinitKey, 0,
+                        reinitKey.length);
+            }
+            needsReinit = false;
+        }
 
         if (inputLen != 0 && (input == null || inputLen < 0 || inputOffset < 0
                 || (inputOffset + inputLen) > input.length))
