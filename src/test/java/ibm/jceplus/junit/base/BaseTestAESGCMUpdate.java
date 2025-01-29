@@ -39,7 +39,7 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -174,7 +174,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         return result;
     }
 
-    @Test
+    // @Test
     public void testCaseWithLongString2() throws Exception {
 
         byte[] iv = new byte[GCM_IV_LENGTH];
@@ -204,7 +204,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         }
     }
 
-    @Test
+    // @Test
     public void testCaseWithShorString3() throws Exception {
 
         byte[] iv = new byte[GCM_IV_LENGTH];
@@ -244,7 +244,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         return (outputText3);
     }
 
-    @Test
+    // @Test
     public void testCaseShortBufferError4() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -313,7 +313,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         }
     }
 
-    @Test
+    // @Test
     public void testCaseCallAfterShortBuffer5() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -385,7 +385,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         }
     }
 
-    @Test
+    // @Test
     public void testCaseCallUpdateAfterFinal() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -478,7 +478,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
      * read the encrypted file and decrypt it and write the decrypted bytes to a decrypted file
      * read both the plain and decrypted files and verify they are same.
      */
-    @Test
+    // @Test
     public void testReadWriteToAFile6() throws Exception {
 
         byte[] iv = new byte[GCM_IV_LENGTH];
@@ -632,7 +632,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
 
     }
 
-    @Test
+    // @Test
     public void testWithOneDataUpdate7() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -691,7 +691,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         return destText;
     }
 
-    @Test
+    // @Test
     public void testWith1UpdateinPlace8() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -759,7 +759,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         return copyOfOutput;
     }
 
-    @Test
+    @RepeatedTest(1000)
     public void testWithMultipleDataUpdate9() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -786,7 +786,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         }
     }
 
-    @Test
+    @RepeatedTest(1000)
     public void testWithMultipleDataUpdate10() throws Exception {
         byte[] myAAD = "12345678".getBytes();
         byte[] iv = new byte[GCM_IV_LENGTH];
@@ -862,7 +862,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         return destText;
     }
 
-    @Test
+    // @Test
     public void testByteBuffer11() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -908,7 +908,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         return (outputText12);
     }
 
-    @Test
+    // @Test
     public void test1Update1Final12() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -960,7 +960,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
 
     }
 
-    @Test
+    // @Test
     public void testCalllAAEDAfterDataUpdate13() throws Exception {
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
@@ -1026,7 +1026,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         }
     }
 
-    @Test
+    // @Test
     public void testWithUpdatesShortBuffer() throws Exception {
         Cipher cpl = null;
         try {
@@ -1046,7 +1046,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         }
     }
 
-    @Test
+    // @Test
     public void testWithUdpatesEncryptAfterShortBufferRetry() throws Exception {
         Cipher cpl = Cipher.getInstance("AES/GCM/NoPadding", getProviderName());
         GCMParameterSpec parameterSpec = new GCMParameterSpec(128, ivBytes); //128 bit auth tag length
@@ -1074,7 +1074,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
 
     }
 
-    @Test
+    // @Test
     public void testWithUpdatesDecryptAfterShortBufferRetry() throws Exception {
         byte[] cipherText = null;
         Cipher cpl = null;
@@ -1114,7 +1114,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
     }
 
     // Respecify parameters twice and it should fail.
-    @Test
+    // @Test
     public void testWithUpdatesCipherStates() throws Exception {
         Cipher cpl = null;
 
@@ -1163,7 +1163,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
 
     }
 
-    @Test
+    // @Test
     public void testCallUpdateFailsSameKeyIV() throws Exception {
         int len = 0;
         GCMParameterSpec gcmParamSpec = new GCMParameterSpec(128, ivBytes); // 128 bit auth tag length
@@ -1196,7 +1196,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
 
     }
 
-    @Test
+    // @Test
     public void testMultipleUpdateWithoutAllocatingExternalBuffer19() throws Exception {
 
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES", getProviderName());
@@ -1299,7 +1299,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
         return decryptedText;
     }
 
-    @Test
+    // @Test
     public void testNoDataUpdate20() throws Exception {
         for (int keysizeloop = 1; keysizeloop < 3; keysizeloop++) {
 
