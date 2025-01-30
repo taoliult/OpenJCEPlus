@@ -761,6 +761,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
 
     @RepeatedTest(1000)
     public void testWithMultipleDataUpdate9() throws Exception {
+        System.out.println("Run testWithMultipleDataUpdate9");
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
         byte[] myAAD = "12345678".getBytes();
@@ -788,6 +789,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
 
     @RepeatedTest(1000)
     public void testWithMultipleDataUpdate10() throws Exception {
+        System.out.println("Run testWithMultipleDataUpdate10");
         byte[] myAAD = "12345678".getBytes();
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
