@@ -220,7 +220,11 @@ public final class GCMCipher {
                         parameters.pointer(), inputBuffer.pointer(), outputBuffer.pointer());
                 // Copy Output + Tag out of native data buffer
                 outputBuffer.get(0, output, outputOffset, len);
+                // Cleanup with remove() after use
+                GCMCipher.inputBuffer.remove();
+                GCMCipher.outputBuffer.remove();
             }
+            GCMCipher.parameterBuffer.remove();
 
             //OCKDebug.Msg (debPrefix, methodName, "RC = " + rc);
             if (rc != 0) {
@@ -341,12 +345,16 @@ public final class GCMCipher {
                         inputBuffer.pointer(), outputBuffer.pointer());
                 // Copy Output + Tag out of native data buffer
                 outputBuffer.get(0, output, outputOffset, len);
+                // Cleanup with remove() after use
+                GCMCipher.inputBuffer.remove();
+                GCMCipher.outputBuffer.remove();
             }
             if (rc != 0) {
                 throw new OCKException(ErrorCodes.get(rc));
             }
             // Copy Tag out of native data buffer
             parameters.get(keyLen + ivLen + aadLen, output, outputOffset + inputLen, tagLen);
+            GCMCipher.parameterBuffer.remove();
 
             outLen = inputLen + tagLen;
         } else {
