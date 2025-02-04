@@ -59,11 +59,16 @@ public final class DHKeyFactory extends KeyFactorySpi {
         try {
             if (keySpec instanceof DHPublicKeySpec) {
                 DHPublicKeySpec dhPubKeySpec = (DHPublicKeySpec) keySpec;
+                int keySize = dhPubKeySpec.getP().bitLength();
+                DHUtils.checkKeySize(keySize, 0, provider.isFIPS());
                 return new DHPublicKey(provider, dhPubKeySpec.getY(), dhPubKeySpec.getP(),
                         dhPubKeySpec.getG());
 
             } else if (keySpec instanceof X509EncodedKeySpec) {
-                return new DHPublicKey(provider, ((X509EncodedKeySpec) keySpec).getEncoded());
+                DHPublicKey publicKey = new DHPublicKey(provider, ((X509EncodedKeySpec) keySpec).getEncoded());
+                int keySize = publicKey.getParams().getP().bitLength();
+                DHUtils.checkKeySize(keySize, 0, provider.isFIPS());
+                return publicKey;
 
             } else {
                 throw new InvalidKeySpecException("Inappropriate key specification");
@@ -90,11 +95,16 @@ public final class DHKeyFactory extends KeyFactorySpi {
         try {
             if (keySpec instanceof DHPrivateKeySpec) {
                 DHPrivateKeySpec dhPrivKeySpec = (DHPrivateKeySpec) keySpec;
+                int keySize = dhPrivKeySpec.getP().bitLength();
+                DHUtils.checkKeySize(keySize, 0, provider.isFIPS());
                 return new DHPrivateKey(provider, dhPrivKeySpec.getX(), dhPrivKeySpec.getP(),
                         dhPrivKeySpec.getG());
 
             } else if (keySpec instanceof PKCS8EncodedKeySpec) {
-                return new DHPrivateKey(provider, ((PKCS8EncodedKeySpec) keySpec).getEncoded());
+                DHPrivateKey privateKey = new DHPrivateKey(provider, ((PKCS8EncodedKeySpec) keySpec).getEncoded());
+                int keySize = privateKey.getParams().getP().bitLength();
+                DHUtils.checkKeySize(keySize, 0, provider.isFIPS());
+                return privateKey;
 
             } else {
                 throw new InvalidKeySpecException("Inappropriate key specification");
