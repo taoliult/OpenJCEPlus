@@ -1,5 +1,5 @@
 /*
- * Copyright IBM Corp. 2023
+ * Copyright IBM Corp. 2025
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -12,24 +12,24 @@ import java.security.InvalidParameterException;
 
 final class DHUtils {
 
-    final static int MIN_KEYSIZE_NONFIPS = 512;
-    final static int MAX_KEYSIZE_NONFIPS = 8192;
-    final static int MIN_KEYSIZE_FIPS = 2048;
-    final static int MAX_KEYSIZE_FIPS = 8192;
+    static final int MIN_KEYSIZE_NONFIPS = 512;
+    static final int MAX_KEYSIZE_NONFIPS = 8192;
+    static final int MIN_KEYSIZE_FIPS = 2048;
+    static final int MAX_KEYSIZE_FIPS = 8192;
 
     /**
-     * Check the length of an DH key modulus/exponent to make sure it is not
-     * too short or long.
+     * Checks the length of a DH key modulus/exponent to ensure it is within
+     * the acceptable range.
      *
      * @param keySize
      *                the bit length of the modulus.
      * @param expSize
      *                the bit length of the exponent.
      * @param isFIPS
-     *                whether the provider is FIPS.
-     *
+     *                whether the provider is FIPS-compliant.
+     * 
      * @throws InvalidParameterException
-     *                             if any of the values are unacceptable.
+     *                             if any values are unacceptable.
      */
     static void checkKeySize(int keySize, int expSize, boolean isFIPS)
             throws InvalidParameterException {
@@ -42,9 +42,9 @@ final class DHUtils {
     }
 
     /**
-     * Check the length of an DH key modulus/exponent to make sure it is not
-     * too short or long. Some impls have their own min and max key sizes that
-     * may or may not match with a system defined value.
+     * Checks the length of a DH key modulus/exponent to ensure it is within
+     * the acceptable range. Some impls have their own min and max key sizes 
+     * that may or may not match with a system defined value.
      *
      * @param keySize
      *                the bit length of the modulus.
@@ -56,7 +56,7 @@ final class DHUtils {
      *                the bit length of the exponent.
      *
      * @throws InvalidParameterException
-     *                             if any of the values are unacceptable.
+     *                             if any values are unacceptable.
      */
     static void checkKeySize(int keySize, int minSize, int maxSize, int expSize)
             throws InvalidParameterException {
