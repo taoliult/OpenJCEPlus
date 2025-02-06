@@ -93,7 +93,7 @@ public final class DHKeyFactory extends KeyFactorySpi {
         try {
             if (keySpec instanceof DHPrivateKeySpec) {
                 DHPrivateKeySpec dhPrivKeySpec = (DHPrivateKeySpec) keySpec;
-                DHUtils.checkKeySize(dhPrivKeySpec.getP().bitLength(), 0, provider.isFIPS());
+                DHUtils.checkKeySize(dhPrivKeySpec.getP().bitLength(), dhPrivKeySpec.getX().bitLength(), provider.isFIPS());
                 return new DHPrivateKey(provider, dhPrivKeySpec.getX(), dhPrivKeySpec.getP(),
                         dhPrivKeySpec.getG());
 
