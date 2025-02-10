@@ -10,6 +10,8 @@ package ibm.jceplus.junit.openjceplus.multithread;
 
 import ibm.jceplus.junit.base.BaseTestAESGCMUpdate;
 import ibm.jceplus.junit.openjceplus.Utils;
+
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
