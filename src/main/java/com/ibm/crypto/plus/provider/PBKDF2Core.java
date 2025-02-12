@@ -17,69 +17,52 @@ import javax.crypto.SecretKeyFactorySpi;
 import javax.crypto.spec.PBEKeySpec;
 
 /**
- * This class implements a key factory for PBE keys derived using
- * PBKDF2 with HmacSHA1/HmacSHA224/HmacSHA256/HmacSHA384/HmacSHA512
- * pseudo random function (PRF) as defined in PKCS#5 v2.1.
- *
- * @author Valerie Peng
- *
- * See also same named class from OpenJDK. This class makes use of similar code.
- */
+ * This class implements a key factory for PBE (Password-Based Encryption) keys  
+ * derived using PBKDF2 with HmacSHA1, HmacSHA224, HmacSHA256, HmacSHA384,  
+ * or HmacSHA512 as the pseudo-random function (PRF), as defined in PKCS#5 v2.1.  
+ */  
 abstract class PBKDF2Core extends SecretKeyFactorySpi {
 
-    private final String prfAlgo;
-
-    /**
-     * Provider associated with this service instance.
-     */
     private OpenJCEPlusProvider provider = null;
+    private final String prfAlgorithm;
 
     PBKDF2Core(OpenJCEPlusProvider provider, String prfAlgo) {
         this.provider = provider;
-        this.prfAlgo = prfAlgo;
+        this.prfAlgorithm = prfAlgo;
     }
 
     /**
-     * Generates a <code>SecretKey</code> object from the provided key
-     * specification (key material).
+     * Generates PBKDF2KeyImpl object from the given key specification.
      *
-     * @param keySpec the specification (key material) of the secret key
-     *
-     * @return the secret key
-     *
-     * @exception InvalidKeySpecException if the given key specification
-     * is inappropriate for this key factory to produce a public key.
+     * @param keySpec the key specification containing the key material
+     * @return the generated secret key
+     * @throws InvalidKeySpecException if the provided key specification is
+     *                                 incompatible with this key factory.
      */
+    @Override
     protected SecretKey engineGenerateSecret(KeySpec keySpec) throws InvalidKeySpecException {
-        if (keySpec instanceof PBEKeySpec ks) {
-            return new PBKDF2KeyImpl(this.provider, ks, prfAlgo);
-        } else {
-            throw new InvalidKeySpecException("Only PBEKeySpec is accepted");
+        if (!(keySpec instanceof PBEKeySpec)) {
+            throw new InvalidKeySpecException("Only PBEKeySpec is allowed.");
         }
+        return new PBKDF2KeyImpl(this.provider, (PBEKeySpec) keySpec, prfAlgorithm);
     }
 
     /**
-     * Returns a specification (key material) of the given key
-     * in the requested format.
+     * Returns the key specification of the given key.
      *
-     * @param key the key
-     *
-     * @param keySpecCl the requested format in which the key material shall be
-     * returned
-     *
-     * @return the underlying key specification (key material) in the
-     * requested format
-     *
-     * @exception InvalidKeySpecException if the requested key
-     * specification is inappropriate for the given key, or the
-     * given key cannot be processed (e.g., the given key has an
-     * unrecognized algorithm or format).
+     * @param key          the key to be processed
+     * @param keySpecClass the desired format in which the key material should be
+     *                     returned
+     * @return the key specification
+     * @exception InvalidKeySpecException if the requested key specification is
+     *                                    incompatible with the key or cannot be
+     *                                    processed
      */
-    protected KeySpec engineGetKeySpec(SecretKey key, Class<?> keySpecCl)
+    protected KeySpec engineGetKeySpec(SecretKey key, Class<?> keySpecClass)
             throws InvalidKeySpecException {
         if (key instanceof javax.crypto.interfaces.PBEKey pKey) {
             // Check if requested key spec is amongst the valid ones
-            if ((keySpecCl != null) && keySpecCl.isAssignableFrom(PBEKeySpec.class)) {
+            if ((keySpecClass != null) && keySpecClass.isAssignableFrom(PBEKeySpec.class)) {
                 char[] passwd = pKey.getPassword();
                 byte[] encoded = pKey.getEncoded();
                 try {
@@ -112,7 +95,7 @@ abstract class PBKDF2Core extends SecretKeyFactorySpi {
      * this key factory.
      */
     protected SecretKey engineTranslateKey(SecretKey key) throws InvalidKeyException {
-        if ((key != null) && (key.getAlgorithm().equalsIgnoreCase("PBKDF2With" + prfAlgo))
+        if ((key != null) && (key.getAlgorithm().equalsIgnoreCase("PBKDF2With" + prfAlgorithm))
                 && (key.getFormat().equalsIgnoreCase("RAW"))) {
 
             // Check if key originates from this factory, if true simply return it.
@@ -127,7 +110,7 @@ abstract class PBKDF2Core extends SecretKeyFactorySpi {
                 PBEKeySpec spec = new PBEKeySpec(password, pKey.getSalt(), pKey.getIterationCount(),
                         encoding.length * 8);
                 try {
-                    return new PBKDF2KeyImpl(this.provider, spec, prfAlgo);
+                    return new PBKDF2KeyImpl(this.provider, spec, prfAlgorithm);
                 } catch (InvalidKeySpecException re) {
                     throw new InvalidKeyException("Invalid key component(s)", re);
                 } finally {
@@ -142,7 +125,7 @@ abstract class PBKDF2Core extends SecretKeyFactorySpi {
             }
         }
         throw new InvalidKeyException(
-                "Only PBKDF2With" + prfAlgo + " key with RAW format is accepted");
+                "Only PBKDF2With" + prfAlgorithm + " key with RAW format is accepted");
     }
 
     public static final class HmacSHA1 extends PBKDF2Core {
