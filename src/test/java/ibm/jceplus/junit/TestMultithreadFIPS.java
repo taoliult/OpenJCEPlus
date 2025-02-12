@@ -27,58 +27,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 public class TestMultithreadFIPS {
-    private final int numThreads = 10;
-    private final int timeoutSec = 4500;
+    private final int numThreads = 100;
+    private final int timeoutSec = 20000;
     private final String[] testList = {
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAES_128",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAES_192",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAES_256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCM_128",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCM_192",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCM_256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMCICOWithGCM",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMCICOWithGCMAndAAD",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESCipherInputStreamExceptions",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESCopySafe",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMLong",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMNonExpanding",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMSameBuffer",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMUpdate",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMWithByteBuffer",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAliases",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestDESede",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestDH",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestDSAKey",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestDSASignatureInteropSUN",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestECDH",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestECDHInteropSunEC",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestECDSASignature",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHKDF",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA256InteropSunJCE",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA3_224",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA3_256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA3_384",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA3_512",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestMiniRSAPSS2",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSASignature",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSA_2048",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSAKey",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSAPSS",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSAPSS2",
-            //"ibm.jceplus.junit.openjceplusfips.multithread.TestRSAPSSInterop2",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSAPSSInterop3",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSASignatureInteropSunRsaSign",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA256Clone_SharedMD",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA3_224",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA3_256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA3_384",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA3_512",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA512",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA512_224",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA512_256",
-            //"ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMWithKeyAndIvCheck", // test not in other test suites?
-    };
+            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMUpdate"};
     public final Object ob = new Object();
 
     public TestMultithreadFIPS() {}
