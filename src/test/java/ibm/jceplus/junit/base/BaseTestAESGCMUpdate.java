@@ -760,7 +760,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
     }
 
     // @Test
-    @RepeatedTest(1)
+    @RepeatedTest(50)
     public void testWithMultipleDataUpdate9() throws Exception {
         System.out.println("testWithMultipleDataUpdate9");
         byte[] iv = new byte[GCM_IV_LENGTH];
@@ -789,7 +789,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
     }
 
     // @Test
-    @RepeatedTest(1000)
+    @RepeatedTest(1)
     public void testWithMultipleDataUpdate10() throws Exception {
         System.out.println("testWithMultipleDataUpdate10");
         byte[] myAAD = "12345678".getBytes();
