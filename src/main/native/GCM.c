@@ -1680,7 +1680,6 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_create_1GCM_1context(
     static const char* functionName = "NativeInterface.create_GCM_context";
     ICC_CTX*           ockCtx       = (ICC_CTX*)((intptr_t)ockContextId);
     ICC_AES_GCM_CTX*   gcmCtx       = NULL;
-    int                rc           = 0;
 
     if (debug) {
         gslogFunctionEntry(functionName);
