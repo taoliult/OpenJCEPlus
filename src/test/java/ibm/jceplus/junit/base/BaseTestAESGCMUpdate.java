@@ -761,6 +761,7 @@ public class BaseTestAESGCMUpdate extends BaseTestJunit5 {
 
     @Test
     public void testWithMultipleDataUpdate9() throws Exception {
+        System.out.println("testWithMultipleDataUpdate9");
         byte[] iv = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(iv);
         byte[] myAAD = "12345678".getBytes();
