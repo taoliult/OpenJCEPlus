@@ -40,7 +40,7 @@ public final class SymmetricCipher {
     private long outputPointer; // Pointer to memory that has the output to the encrypted text by z_kmc
     private long outputOffset; // Offset, in the buffer, to where the output is stored, used to retrieve output after z_kmc call
     private long paramPointer; // Pointer to memory that has the parameters/state keeping used by z_kmc
-    private static volatile long hardwareFunctionPtr = 0;
+    private static long hardwareFunctionPtr = 0;
     private boolean use_z_fast_command = false;
     private static final ConcurrentHashMap<OCKContext, Boolean> hardwareEnabled = new ConcurrentHashMap<>(); // Caching for hardwareFunctionPtr
     private static final String badIdMsg = "Cipher Identifier is not valid";
@@ -117,9 +117,14 @@ public final class SymmetricCipher {
     private SymmetricCipher(OCKContext ockContext, String cipherName, Padding padding)
             throws OCKException {
         // Check whether used algorithm is CBC and whether hardware supports
-        // Use computeIfAbsent() for atomic check-and-put
-        boolean isHardwareSupport = hardwareEnabled.computeIfAbsent(ockContext,
-                key -> checkHardwareSupport(key.getId()) == 1);
+        boolean isHardwareSupport = false;
+        if (hardwareEnabled.containsKey(ockContext))
+            isHardwareSupport = hardwareEnabled.get(ockContext);
+        else {
+            hardwareFunctionPtr = checkHardwareSupport(ockContext.getId());
+            isHardwareSupport = (hardwareFunctionPtr == 1) ? true : false;
+            hardwareEnabled.put(ockContext, isHardwareSupport);
+        }
 
         use_z_fast_command = "AES".equals(cipherName.substring(0, 3))
                 && "CBC".equals(cipherName.substring(cipherName.length() - 3)) && isHardwareSupport;
