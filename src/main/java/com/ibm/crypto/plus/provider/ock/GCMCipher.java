@@ -122,15 +122,15 @@ public final class GCMCipher {
             byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset,
             byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
-        //final String methodName="doGCMFinal_Decrypt ";
+        final String methodName="doGCMFinal_Decrypt ";
         int rc = 0;
         byte[] authenticationData;
 
-        //OCKDebug.Msg(debPrefix, methodName,  "key :" + key);
-        //OCKDebug.Msg(debPrefix, methodName,  "iv :" + iv);
-        //OCKDebug.Msg(debPrefix, methodName,"input :" + input);
-        //OCKDebug.Msg(debPrefix, methodName, "aad :" + aad);
-        //OCKDebug.Msg(debPrefix, methodName,  "tagLen :" + tagLen + " inputOffset :" + inputOffset + "outputOffset :" + outputOffset);
+        OCKDebug.Msg(debPrefix, methodName,  "key :" + key);
+        OCKDebug.Msg(debPrefix, methodName,  "iv :" + iv);
+        OCKDebug.Msg(debPrefix, methodName,"input :" + input);
+        OCKDebug.Msg(debPrefix, methodName, "aad :" + aad);
+        OCKDebug.Msg(debPrefix, methodName,  "tagLen :" + tagLen + " inputOffset :" + inputOffset + "outputOffset :" + outputOffset);
 
         if ((key == null) || (key.length == 0)) {
             throw new IllegalArgumentException("key is null/empty");
@@ -222,7 +222,7 @@ public final class GCMCipher {
                 outputBuffer.get(0, output, outputOffset, len);
             }
 
-            //OCKDebug.Msg (debPrefix, methodName, "RC = " + rc);
+            OCKDebug.Msg (debPrefix, methodName, "RC = " + rc);
             if (rc != 0) {
                 throw new OCKException(ErrorCodes.get(rc));
             }
@@ -244,7 +244,7 @@ public final class GCMCipher {
             byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException {
 
-        //final String methodName = "doGCMFinal_Encrypt ";
+        final String methodName = "doGCMFinal_Encrypt ";
         int outLen = 0;
         byte[] authenticationData;
         int outputBufLen = output.length;
@@ -287,11 +287,11 @@ public final class GCMCipher {
                     "Output buffer must be (at least) " + len + " bytes long");
         }
 
-        //OCKDebug.Msg(debPrefix, methodName, "key :", key);
-        //OCKDebug.Msg(debPrefix, methodName, "iv :", iv);
-        //OCKDebug.Msg(debPrefix, methodName, "input :", iv);
-        //OCKDebug.Msg(debPrefix, methodName, "aad :", aad);
-        //OCKDebug.Msg(debPrefix, methodName,  "tagLen :" + tagLen + " inputOffset :" + inputOffset + "outputOffset :" + outputOffset);
+        OCKDebug.Msg(debPrefix, methodName, "key :", key);
+        OCKDebug.Msg(debPrefix, methodName, "iv :", iv);
+        OCKDebug.Msg(debPrefix, methodName, "input :", iv);
+        OCKDebug.Msg(debPrefix, methodName, "aad :", aad);
+        OCKDebug.Msg(debPrefix, methodName,  "tagLen :" + tagLen + " inputOffset :" + inputOffset + "outputOffset :" + outputOffset);
 
         // Check if any part of the potential output overlaps the input area. If
         // so, then make a copy of a the input area
@@ -352,8 +352,8 @@ public final class GCMCipher {
         } else {
             byte[] tag = new byte[tagLen];
 
-            //OCKDebug.Msg (debPrefix, methodName,   "key.length :" + key.length + " iv.length :" + iv.length + " inputOffset :" + inputOffset);
-            //OCKDebug.Msg (debPrefix, methodName," inputLen :" + inputLen + " aadLen :" + aadLen + " tagLen " + tagLen);
+            OCKDebug.Msg (debPrefix, methodName,   "key.length :" + key.length + " iv.length :" + iv.length + " inputOffset :" + inputOffset);
+            OCKDebug.Msg (debPrefix, methodName," inputLen :" + inputLen + " aadLen :" + aadLen + " tagLen " + tagLen);
             rc = NativeInterface.do_GCM_encrypt(ockContext.getId(), gcmCtx, key, key.length, iv,
                     iv.length, input, inputOffset, inputLen, output, outputOffset,
                     authenticationData, aadLen, tag, tagLen);
@@ -363,7 +363,7 @@ public final class GCMCipher {
                 throw new OCKException(ErrorCodes.get(rc));
             }
         }
-        //OCKDebug.Msg(debPrefix, methodName,  "outLen=" + outLen + " output=",  output);
+        OCKDebug.Msg(debPrefix, methodName,  "outLen=" + outLen + " output=",  output);
         return outLen;
     }
 
