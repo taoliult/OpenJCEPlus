@@ -46,52 +46,52 @@ public class OCKDebug {
 
     public static void Msg(String debPrefix, String methodName,
             String msg) {
-        System.err
+        System.out
                 .println(debPrefix + " " + methodName + " " + "ThreadId=" + Thread.currentThread().getId() + " " + msg);
     }
 
     public static void Msg(String debPrefix, String methodName,
             int msg) {
-        System.err
+        System.out
                 .println(debPrefix + " " + methodName + " " + "ThreadId=" + Thread.currentThread().getId() + " " + msg);
     }
 
     public static void Msg(String debPrefix, String methodName,
             long msg) {
-        System.err
+        System.out
                 .println(debPrefix + " " + methodName + " " + "ThreadId=" + Thread.currentThread().getId() + " " + msg);
     }
 
     public static void Msg(String debPrefix, String methodName,
             byte[] msg) {
         int length = (msg != null) ? msg.length : 0;
-        System.err.println(debPrefix + " " + methodName + " ThreadId=" + Thread.currentThread().getId() + " "
+        System.out.println(debPrefix + " " + methodName + " ThreadId=" + Thread.currentThread().getId() + " "
                 + " msg.length :" + length + " " + bytesToHex(msg));
     }
 
     public static void Msg(String debPrefix, String methodName,
             boolean msg) {
-        System.err
+        System.out
                 .println(debPrefix + " " + methodName + " " + "ThreadId=" + Thread.currentThread().getId() + " " + msg);
     }
 
     public static void Msg(String debPrefix, String methodName,
             String msgPrefix, byte[] msg) {
         int length = (msg != null) ? msg.length : 0;
-        System.err.println(debPrefix + " " + methodName + " ThreadId=" + Thread.currentThread().getId() + " "
+        System.out.println(debPrefix + " " + methodName + " ThreadId=" + Thread.currentThread().getId() + " "
                 + " msg.length :" + length + " " + bytesToHex(msg));
 
     }
 
     public static void Msg(String debPrefix, String methodName,
             Object msg) {
-        System.err
+        System.out
                 .println(debPrefix + " " + methodName + " " + "ThreadId=" + Thread.currentThread().getId() + " " + msg);
     }
 
     public static void Msg(String debPrefix, String methodName, String msgPrefix,
             Object msg) {
-        System.err.println(debPrefix + " " + methodName + " " + "ThreadId=" + Thread.currentThread().getId() + " "
+        System.out.println(debPrefix + " " + methodName + " " + "ThreadId=" + Thread.currentThread().getId() + " "
                 + msgPrefix + " " + msg);
     }
 }
