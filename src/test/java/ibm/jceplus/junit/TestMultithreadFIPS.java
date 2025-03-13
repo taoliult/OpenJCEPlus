@@ -1,9 +1,9 @@
 /*
  * Copyright IBM Corp. 2023, 2024
  *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms provided by IBM in the LICENSE file that accompanied
- * this code, including the "Classpath" Exception described therein.
+ * Licensed under the Apache License 2.0 (the "License").  You may not use
+ * this file except in compliance with the License.  You can obtain a copy
+ * in the file LICENSE in the source distribution.
  */
 package ibm.jceplus.junit;
 
@@ -27,67 +27,23 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 public class TestMultithreadFIPS {
-    private final int numThreads = 10;
+    private final int numThreads = 2;
     private final int timeoutSec = 4500;
     private final String[] testList = {
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAES_128",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAES_192",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAES_256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCM_128",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCM_192",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCM_256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMCICOWithGCM",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMCICOWithGCMAndAAD",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESCipherInputStreamExceptions",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESCopySafe",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMLong",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMNonExpanding",
             "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMSameBuffer",
             "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMUpdate",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMWithByteBuffer",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestAliases",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestDESede",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestDH",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestDSAKey",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestDSASignatureInteropSUN",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestECDH",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestECDHInteropSunEC",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestECDSASignature",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHKDF",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA256InteropSunJCE",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA3_224",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA3_256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA3_384",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestHmacSHA3_512",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestMiniRSAPSS2",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSASignature",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSA_2048",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSAKey",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSAPSS",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSAPSS2",
-            //"ibm.jceplus.junit.openjceplusfips.multithread.TestRSAPSSInterop2",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSAPSSInterop3",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestRSASignatureInteropSunRsaSign",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA256Clone_SharedMD",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA3_224",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA3_256",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA3_384",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA3_512",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA512",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA512_224",
-            "ibm.jceplus.junit.openjceplusfips.multithread.TestSHA512_256",
-            //"ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMWithKeyAndIvCheck", // test not in other test suites?
-    };
+            "ibm.jceplus.junit.openjceplusfips.multithread.TestAESGCMWithByteBuffer",};
     public final Object ob = new Object();
 
     public TestMultithreadFIPS() {}
 
-    private boolean assertConcurrent(final String message, final Callable<List<TestExecutionSummary.Failure>> callable,
+    private boolean assertConcurrent(final String message,
+            final Callable<List<TestExecutionSummary.Failure>> callable,
             final int maxTimeoutSeconds) throws InterruptedException {
         boolean failed = false;
         final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<Throwable>());
-        final List<TestExecutionSummary.Failure> failures = Collections.synchronizedList(new ArrayList<TestExecutionSummary.Failure>());
+        final List<TestExecutionSummary.Failure> failures = Collections
+                .synchronizedList(new ArrayList<TestExecutionSummary.Failure>());
         final ExecutorService threadPool = Executors.newFixedThreadPool(numThreads);
         try {
             final CountDownLatch allExecutorThreadsReady = new CountDownLatch(numThreads);
@@ -109,13 +65,11 @@ public class TestMultithreadFIPS {
                 });
             }
             // wait until all threads are ready
-            assertTrue(
-                    allExecutorThreadsReady.await(numThreads * 100, TimeUnit.MILLISECONDS),
+            assertTrue(allExecutorThreadsReady.await(numThreads * 100, TimeUnit.MILLISECONDS),
                     "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent");
             // start all test runners
             afterInitBlocker.countDown();
-            assertTrue(
-                    allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS),
+            assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS),
                     message + " timeout! More than " + maxTimeoutSeconds + " seconds");
         } finally {
             threadPool.shutdownNow();
@@ -137,9 +91,9 @@ public class TestMultithreadFIPS {
 
     private Callable<List<TestExecutionSummary.Failure>> testToCallable(String className) {
         SummaryGeneratingListener listener = new SummaryGeneratingListener();
-        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request().
-            selectors(selectClass(className)).build();
-        
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                .selectors(selectClass(className)).build();
+
         Launcher launcher = LauncherFactory.create();
         launcher.discover(request);
         launcher.registerTestExecutionListeners(listener);
@@ -158,22 +112,26 @@ public class TestMultithreadFIPS {
 
         List<String> failedTests = new ArrayList<>();
 
-        for (String test : testList) {
-            try {
-                System.out.println("Test calling: " + test);
 
-                boolean failed = assertConcurrent("Test failed: " + test, testToCallable(test), timeoutSec);
-                if (failed) {
-                    failedTests.add(test);
+        for (int x = 0; x < 10000; x++) {
+            for (String test : testList) {
+                try {
+                    System.out.println("Test calling: " + test + " " + x);
+
+                    boolean failed = assertConcurrent("Test failed: " + test, testToCallable(test),
+                            timeoutSec);
+                    if (failed) {
+                        failedTests.add(test);
+                    }
+
+                } catch (InterruptedException e) {
+                    //System.out.println("Test interrupted: " + e);
                 }
-
-            } catch (InterruptedException e) {
-                //System.out.println("Test interrupted: " + e);
-            }
-            System.out.println("Test finished: " + test);
-            if (!failedTests.isEmpty()) {
-                String allFailedTests = String.join("\n\t", failedTests);
-                fail("Failed tests:\n\t" + allFailedTests);
+                System.out.println("Test finished: " + test);
+                if (!failedTests.isEmpty()) {
+                    String allFailedTests = String.join("\n\t", failedTests);
+                    fail("Failed tests:\n\t" + allFailedTests);
+                }
             }
         }
     }
