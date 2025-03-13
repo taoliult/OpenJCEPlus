@@ -33,7 +33,7 @@ class FastJNIBuffer {
     }
 
     public void put(int index, byte[] src, int offset, int length) {
-        if (index + length > capacity) {
+        if (index < 0 || length < 0 || index > capacity || (index + length) > capacity) {
             throw new RuntimeException("Native array index out of bound.");
         }
         if (src != null) {
@@ -42,7 +42,7 @@ class FastJNIBuffer {
     }
 
     public void get(int index, byte[] dst, int offset, int length) {
-        if (index + length > capacity) {
+        if (index < 0 || length < 0 || index > capacity || (index + length) > capacity) {
             throw new RuntimeException("Native array index out of bound.");
         }
         if (dst != null) {

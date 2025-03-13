@@ -27,6 +27,10 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_EXTRAND_1create(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jstring algName) {
     static const char *functionName = "NativeInterface.EXTRAND_create";
 
+    if (ockContextId == 0) {
+        throwOCKException(env, 0, "Invalid ockContextId");
+    }
+    
     ICC_CTX      *ockCtx       = (ICC_CTX *)((intptr_t)ockContextId);
     const char   *algNameChars = NULL;
     ICC_PRNG     *ockPRNG      = NULL;

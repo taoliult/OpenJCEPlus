@@ -1021,7 +1021,7 @@ public final class GCMCipher {
         return buffer.array();
     }
 
-    static class GCMContextPointer {
+    static class GCMContextPointer implements AutoCloseable{
         long gcmCtx = 0;
         long ockContext = 0;
 
@@ -1031,14 +1031,10 @@ public final class GCMCipher {
         }
 
         @Override
-        protected synchronized void finalize() throws Throwable {
-            try {
-                if (gcmCtx != 0) {
-                    NativeInterface.free_GCM_ctx(ockContext, gcmCtx);
-                    gcmCtx = 0;
-                }
-            } finally {
-                super.finalize();
+        public synchronized void close() throws OCKException {
+            if (gcmCtx != 0) {
+                NativeInterface.free_GCM_ctx(ockContext, gcmCtx);
+                gcmCtx = 0;
             }
         }
 

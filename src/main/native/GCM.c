@@ -1197,6 +1197,11 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_do_1GCM_1decrypt(
     jbyteArray ciphertext, jint ciphertextOffset, jint ciphertextLen,
     jbyteArray plaintext, jint plaintextOffset, jbyteArray aad, jint aadLen,
     jint tagLen) {
+
+    if (ockContextId == 0 || gcmCtxId == 0) {
+        throwOCKException(env, 0, "Invalid ockContextId or gcmCtxId");
+    }
+    
     static const char* functionName     = "NativeInterface.do_GCM_decrypt";
     ICC_CTX*           ockCtx           = (ICC_CTX*)((intptr_t)ockContextId);
     unsigned char*     keyNative        = NULL;
