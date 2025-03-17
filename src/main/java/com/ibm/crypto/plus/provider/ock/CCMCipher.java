@@ -34,6 +34,8 @@ public final class CCMCipher {
     static final int CCM_MODE_DECRYPT = 128;
     static final int CCM_AUGMENTED_MODE = 768;
 
+    private static final int OCK_ENCRYPTION_RESIDUE = 16;
+
     static {
         disableCCMAcceleration = Boolean.parseBoolean(
             System.getProperty(DISABLE_CCM_ACCELERATION, "false"));
@@ -434,7 +436,7 @@ public final class CCMCipher {
         if (totalLen < 0)
             totalLen = 0;
         //OCKDebug.Msg (debPrefix, methodName, "getOutputSize  totalLen=" + totalLen);
-        return totalLen;
+        return totalLen + OCK_ENCRYPTION_RESIDUE;
     }
 
 
