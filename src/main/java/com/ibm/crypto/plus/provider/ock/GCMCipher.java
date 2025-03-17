@@ -38,6 +38,8 @@ public final class GCMCipher {
     static final int GCM_MODE_DECRYPT = 128;
     static final int GCM_AUGMENTED_MODE = 768;
 
+    private static final int OCK_ENCRYPTION_RESIDUE = 16;
+
     static {
         disableGCMAcceleration = AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
             public Boolean run() {
@@ -942,7 +944,7 @@ public final class GCMCipher {
         if (totalLen < 0)
             totalLen = 0;
         //OCKDebug.Msg (debPrefix, methodName, "getOutputSize  totalLen=" + totalLen);
-        return totalLen;
+        return totalLen  + OCK_ENCRYPTION_RESIDUE;
     }
 
     public static void doGCM_cleanup(OCKContext ockContext) throws OCKException {
