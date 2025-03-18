@@ -54,6 +54,8 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
     private byte[] authData = null;
     private boolean updateCalled = false;
 
+    private static final int OCK_ENCRYPTION_RESIDUE = 16;
+
     // Java 8 Cipher.class documentation does not require that an cipher.init is
     // called between successive encryption or decryption. However it requires
     // prior IV+ Key cannot be used. Since it is not feasible to maintain a history
@@ -1301,7 +1303,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
         // if we are decrypting with padding applied, we can perform this
         // check only after we have determined how many padding bytes there
         // are.
-        int outputCapacity = output.length - outputOffset;
+        int outputCapacity = output.length - outputOffset + OCK_ENCRYPTION_RESIDUE;
         if ((output == null) || (outputCapacity < estOutSize)) {
             throw new ShortBufferException(
                     "Output buffer must be " + "(at least) " + estOutSize + " bytes long");
