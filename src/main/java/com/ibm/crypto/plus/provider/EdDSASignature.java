@@ -72,8 +72,10 @@ abstract class EdDSASignature extends SignatureSpi {
         // This edDSA singature is using default mode (Ed25519 or Ed448)
         // for edDSAParameterSpec (context = null, prehash = false)
         if (params instanceof EdDSAParameterSpec) {
+            System.out.println("Tao Debug - 1");
             EdDSAParameterSpec edParams = (EdDSAParameterSpec) params;
             if (edParams.isPrehash() || !edParams.getContext().isEmpty()) {
+                System.out.println("Tao Debug - 2");
                 throw new InvalidAlgorithmParameterException(
                         "The EdDSA signature only supports the default mode (Ed25519 or Ed448),"
                         + " where the EdDSAParameterSpec context is null and prehash is set to false");
