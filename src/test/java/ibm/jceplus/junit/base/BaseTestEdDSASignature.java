@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.*;
 import java.security.spec.*;
 
-import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
+import java.security.spec.EdDSAParameterSpec;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
