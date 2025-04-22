@@ -28,6 +28,10 @@ import java.security.spec.NamedParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.*;
+import java.security.spec.*;
+
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -232,6 +236,15 @@ public class BaseTestEdDSASignature extends BaseTestJunit5Signature {
                         + "df7f4c8f1cb49f6396afc8a70abe6d8aef0db478d4c6b2970076c6a0484fe76d"
                         + "76b3a97625d79f1ce240e7c576750d295528286f719b413de9ada3e8eb78ed57"
                         + "3603ce30d8bb761785dc30dbc320869e1a00");
+
+        // Ed25519ctx
+        byte[] context = HexFormat.of().parseHex("666f6f");
+        runSignTest("Ed25519", new EdDSAParameterSpec(false, context),
+            "0305334e381af78f141cb666f6199f57bc3495335a256a95bd2a55bf546663f6",
+            "dfc9425e4f968f7f0c29f0259cf5f9aed6851c2bb4ad8bfb860cfee0ab248292",
+            "f726936d19c800494e3fdaff20b276a8",
+            "55a4cc2f70a54e04288c5f4cd1e45a7bb520b36292911876cada7323198dd87a" +
+            "8b36950b95130022907a7fb7c4e9b2d5f6cca685a587b4b21f4b888e4e7edb0d");
 
     }
 
