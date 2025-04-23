@@ -32,7 +32,6 @@ abstract class EdDSASignature extends SignatureSpi {
 
     EdDSASignature(OpenJCEPlusProvider provider) {
         try {
-            System.out.println("Tao Debug - EdDSASignature 1");
             this.provider = provider;
             this.signature = SignatureEdDSA.getInstance(provider.getOCKContext());
         } catch (Exception e) {
@@ -42,7 +41,6 @@ abstract class EdDSASignature extends SignatureSpi {
 
     EdDSASignature(OpenJCEPlusProvider provider, String Alg) {
         try {
-            System.out.println("Tao Debug - EdDSASignature 2");
             this.provider = provider;
             this.signature = SignatureEdDSA.getInstance(provider.getOCKContext());
         } catch (Exception e) {
@@ -54,21 +52,18 @@ abstract class EdDSASignature extends SignatureSpi {
     @Deprecated
     @Override
     protected Object engineGetParameter(String param) throws InvalidParameterException {
-        System.out.println("Tao Debug - engineGetParameter 1");
         throw new UnsupportedOperationException("getParameter() not supported");
     }
 
     @Deprecated
     @Override
     protected void engineSetParameter(String param, Object value) throws InvalidParameterException {
-        System.out.println("Tao Debug - engineGetParameter 2");
         throw new UnsupportedOperationException("setParameter() not supported");
     }
 
     @Override
     protected void engineSetParameter(AlgorithmParameterSpec params)
             throws InvalidAlgorithmParameterException {
-        System.out.println("Tao Debug - 0");
         if (params == null) {
             return;
         }
@@ -77,10 +72,8 @@ abstract class EdDSASignature extends SignatureSpi {
         // This edDSA singature is using default mode (Ed25519 or Ed448)
         // for edDSAParameterSpec (context = null, prehash = false)
         if (params instanceof EdDSAParameterSpec) {
-            System.out.println("Tao Debug - 1");
             EdDSAParameterSpec edParams = (EdDSAParameterSpec) params;
             if (edParams.isPrehash() || !edParams.getContext().isEmpty()) {
-                System.out.println("Tao Debug - 2");
                 throw new InvalidAlgorithmParameterException(
                         "The EdDSA signature only supports the default mode (Ed25519 or Ed448),"
                         + " where the EdDSAParameterSpec context is null and prehash is set to false");
@@ -97,12 +90,10 @@ abstract class EdDSASignature extends SignatureSpi {
 
     @Override
     protected AlgorithmParameters engineGetParameters() {
-        System.out.println("Tao Debug - engineGetParameter 3");
         return null;
     }
 
     private void ensureMessageInit() throws SignatureException {
-        System.out.println("Tao Debug - ensureMessageInit 1");
         if (message == null) {
             if (this.signature == null) {
                 throw new SignatureException("Not initialized");
@@ -113,7 +104,6 @@ abstract class EdDSASignature extends SignatureSpi {
 
     @Override
     protected void engineInitSign(PrivateKey privateKey) throws InvalidKeyException {
-        System.out.println("Tao Debug - engineInitSign 1");
         EdDSAPrivateKeyImpl edDSAPrivate = null;
         try {
             edDSAPrivate = (EdDSAPrivateKeyImpl) new EdDSAKeyFactory(provider)
@@ -140,7 +130,6 @@ abstract class EdDSASignature extends SignatureSpi {
 
     @Override
     protected void engineInitVerify(PublicKey publicKey) throws InvalidKeyException {
-        System.out.println("Tao Debug - engineInitVerify 1");
         EdDSAPublicKeyImpl edDSAPublic = null;
         try {
             edDSAPublic = (EdDSAPublicKeyImpl) new EdDSAKeyFactory(provider)
@@ -166,7 +155,6 @@ abstract class EdDSASignature extends SignatureSpi {
 
     @Override
     protected byte[] engineSign() throws SignatureException {
-        System.out.println("Tao Debug - engineSign 1");
         if (!privateKeyInit) {
             throw new SignatureException("Missing private key");
         }

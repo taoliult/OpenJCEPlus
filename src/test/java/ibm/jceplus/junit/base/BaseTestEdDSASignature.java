@@ -20,6 +20,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.EdDSAParameterSpec;
 import java.security.spec.EdECPoint;
 import java.security.spec.EdECPrivateKeySpec;
 import java.security.spec.EdECPublicKeySpec;
@@ -28,12 +29,10 @@ import java.security.spec.NamedParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
-import java.util.*;
-import java.security.spec.*;
-
-import java.security.spec.EdDSAParameterSpec;
+import java.util.HexFormat;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class BaseTestEdDSASignature extends BaseTestJunit5Signature {
 
@@ -239,12 +238,13 @@ public class BaseTestEdDSASignature extends BaseTestJunit5Signature {
 
         // Ed25519ctx
         byte[] context = HexFormat.of().parseHex("666f6f");
-        runSignTest("Ed25519", new EdDSAParameterSpec(false, context),
-            "0305334e381af78f141cb666f6199f57bc3495335a256a95bd2a55bf546663f6",
-            "dfc9425e4f968f7f0c29f0259cf5f9aed6851c2bb4ad8bfb860cfee0ab248292",
-            "f726936d19c800494e3fdaff20b276a8",
-            "55a4cc2f70a54e04288c5f4cd1e45a7bb520b36292911876cada7323198dd87a" +
-            "8b36950b95130022907a7fb7c4e9b2d5f6cca685a587b4b21f4b888e4e7edb0d");
+        runUnsupportedAlgorithmParameterSpecTest("Ed25519", new EdDSAParameterSpec(false, context));
+        // Ed25519ph
+        runUnsupportedAlgorithmParameterSpecTest("Ed25519", new EdDSAParameterSpec(true));
+        // Ed448ph
+        runUnsupportedAlgorithmParameterSpecTest("Ed448", new EdDSAParameterSpec(false, context));
+        runUnsupportedAlgorithmParameterSpecTest("Ed448", new EdDSAParameterSpec(true));
+        runUnsupportedAlgorithmParameterSpecTest("Ed448", new EdDSAParameterSpec(true, context));
 
     }
 
@@ -281,6 +281,19 @@ public class BaseTestEdDSASignature extends BaseTestJunit5Signature {
         sig.update(msgBytes);
 
         assertTrue(sig.verify(computedSig), "Signature verification failed");
+    }
+
+    private void runUnsupportedAlgorithmParameterSpecTest(String algorithm, AlgorithmParameterSpec params)
+            throws Exception {
+        try {
+            Signature sig = Signature.getInstance(algorithm, getProviderName());
+            sig.setParameter(params);
+            fail("Expected InvalidAlgorithmParameterException for unsupported signature algorithm is NOT thrown");
+        } catch (InvalidAlgorithmParameterException e) {
+            String message = e.getMessage();
+            assertTrue((message != null) && message.contains("The EdDSA signature only supports the default mode"),
+                    "Unexpected exception message: " + message);
+        }
     }
 
     @Test
