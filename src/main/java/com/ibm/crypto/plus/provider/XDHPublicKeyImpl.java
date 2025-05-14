@@ -159,7 +159,6 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
         }
 
         this.curve = CurveUtil.getCurve(this.params.getName());
-        System.out.println("Tao Tao Debug - XDHPublicKeyImpl - XDHPublicKeyImpl - 1: " + this.curve.name());
 
         try {
             if (CurveUtil.isFFDHE(this.curve))
@@ -172,16 +171,13 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
 
         try {
             if (u == null) {
-                System.out.println("Tao Tao Debug - XDHPublicKeyImpl - XDHPublicKeyImpl - 2 ");
                 int keySize = CurveUtil.getCurveSize(curve);
                 this.xecKey = XECKey.generateKeyPair(provider.getOCKContext(), curve.ordinal(), keySize);
                 setFieldsFromXeckey();
             } else {
-                System.out.println("Tao Tao Debug - XDHPublicKeyImpl - XDHPublicKeyImpl - 3 ");
                 byte[] uByteA = null;
 
                 if (!(CurveUtil.isEd(this.curve))) {
-                    System.out.println("Tao Tao Debug - XDHPublicKeyImpl - XDHPublicKeyImpl - 4 ");
                     BigInteger p;
                     BigInteger TWO = BigInteger.valueOf(2);
 
@@ -202,7 +198,6 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
                     //The u is reversed for X keys but not Ed keys.
                     reverseByteArray(uByteA);
                 }
-                System.out.println("Tao Tao Debug - XDHPublicKeyImpl - XDHPublicKeyImpl - 5 ");
                 //Array might be to big our too small
                 uByteA = Arrays.copyOf(uByteA,
                         CurveUtil.getCurveSize(this.curve));
@@ -283,12 +278,10 @@ final class XDHPublicKeyImpl extends X509Key implements XECPublicKey, Destroyabl
                 bi3 = params[2].getBigInteger();
                 int size = bi1.bitLength();
                 this.curve = CurveUtil.getCurve(oid, size);
-                System.out.println("Tao Tao Debug - Public - 2: " + this.curve.name());
             } else
                 throw new IOException("This curve does not seem to be a valid XEC/FFDHE curve");
         } catch (IOException e) { // XEC curve
             this.curve = CurveUtil.getCurve(oid, null);
-            System.out.println("Tao Tao Debug - Public - 3: " + this.curve.name());
         }
 
         if (outStream != null) {

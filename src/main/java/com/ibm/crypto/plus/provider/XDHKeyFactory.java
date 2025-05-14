@@ -69,7 +69,6 @@ class XDHKeyFactory extends KeyFactorySpi {
 
                 //Validate algs match for key and keyfactory
                 if (this.alg != null && !(params.getName().equalsIgnoreCase((this.alg)))) {
-                    System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 2C - this.alg: " + this.alg);
                     throw new InvalidKeySpecException("Parameters must be " + this.alg);
                 }
 
