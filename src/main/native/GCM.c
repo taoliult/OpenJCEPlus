@@ -26,6 +26,7 @@
 #define ICC_AES_GCM_CRYPTFINAL_FAILED 4
 #define GetPRIMITICEARRAYCRITICAL 5
 #define ICC_AES_GCM_TAG_MISMATCH 6
+#define DEBUG_GCM_DETAIL
 
 #ifdef WINDOWS
 #define THREAD_LOCAL __declspec(thread)
@@ -1019,9 +1020,9 @@ int GCM_decrypt_core(JNIEnv* env, ICC_CTX* ockCtx, ICC_AES_GCM_CTX* gcmCtx,
     int                rc           = ICC_OSSL_SUCCESS;
     static const char* functionName = "NativeInterface.GCM_decrypt_core";
 
-    if (debug) {
+    //if (debug) {
         gslogFunctionEntry(functionName);
-    }
+    //}
 
     if (gcmCtx == 0) {
         gcmCtx = getOrfreeGCMContext(ockCtx, keyLen);
@@ -1029,31 +1030,38 @@ int GCM_decrypt_core(JNIEnv* env, ICC_CTX* ockCtx, ICC_AES_GCM_CTX* gcmCtx,
 
     rc = gcmCtx != NULL ? ICC_OSSL_SUCCESS : ICC_OSSL_FAILURE;
     if (rc == ICC_OSSL_SUCCESS) {
+        gslogFunctionEntry("GCM - 1 start");
         rc = ICC_AES_GCM_Init(ockCtx, gcmCtx, iv, ivLen, key, keyLen);
-
+        gslogFunctionEntry("GCM - 1 end");
         if (rc == ICC_OSSL_SUCCESS) {
             if (aadLen > 0) {
+                gslogFunctionEntry("GCM - 2 start");
                 rc = ICC_AES_GCM_DecryptUpdate(ockCtx, gcmCtx, aad, aadLen,
                                                NULL, 0, NULL, &updateAADlen);
+                gslogFunctionEntry("GCM - 2 end");
             }
 
             if (rc == ICC_OSSL_SUCCESS) {
                 if (ciphertextLen > 0) {
+                    gslogFunctionEntry("GCM - 3 start");
                     rc = ICC_AES_GCM_DecryptUpdate(
                         ockCtx, gcmCtx, NULL, 0, ciphertext + ciphertextOffset,
                         ciphertextLen, plaintext + plaintextOffset,
                         &updateOutlen);
+                    gslogFunctionEntry("GCM - 3 end");
                 }
 
                 // that needs to catch a hash mismatch condition
                 if (rc == ICC_OSSL_SUCCESS) {
                     // obtain up to last block of plaintext and provide tag to
                     // compare
+                    gslogFunctionEntry("GCM - 4 start");
                     rc = ICC_AES_GCM_DecryptFinal(
                         ockCtx, gcmCtx,
                         plaintext + plaintextOffset + updateOutlen,
                         &finalOutlen,
                         ciphertext + ciphertextOffset + ciphertextLen, tagLen);
+                    gslogFunctionEntry("GCM - 4 end");
 
                     if (rc != ICC_OSSL_SUCCESS) {
                         // entered an error condition here
@@ -1064,7 +1072,9 @@ int GCM_decrypt_core(JNIEnv* env, ICC_CTX* ockCtx, ICC_AES_GCM_CTX* gcmCtx,
                         } else {
                             // generic error condition
                             ockCheckStatus(ockCtx);
+                            gslogFunctionEntry("GCM - 5 start");
                             return ICC_AES_GCM_CRYPTFINAL_FAILED;
+                            gslogFunctionEntry("GCM - 5 end");
                         }
                     }
                 } else {

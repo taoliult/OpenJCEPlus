@@ -314,6 +314,7 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
 
         try {
             if (encrypting) {
+                System.out.println("Tao - 0");
                 if ((output == null) || (output.length - outputOffset < inputLen + tagLenInBytes)) {
                     throw new ShortBufferException(
                             "Output buffer is not long enough to contain ciphertext and tag");
@@ -323,11 +324,12 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                  * switch to the newly generated IV only at this point, need to keep the old IV
                  * around since getIV() might be called up to this point
                  */
-
+                System.out.println("Tao - 1");
                 if (generateIV && newIV != null) {
                     IV = newIV.clone();
                     newIV = null;
                 }
+                System.out.println("Tao - 2");
                 if ((!sbeInLastFinalEncrypt) && encrypting && !initCalledInEncSeq) {
                     boolean sameKeyIv = checkKeyAndNonce(Key, IV, lastEncKey, lastEncIv);
                     if (sameKeyIv) {
@@ -335,18 +337,18 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                         throw new IllegalStateException("Cannot reuse iv for AESGCM encryption");
                     }
                 }
-
+                System.out.println("Tao - 3");
                 int ret = GCMCipher.doGCMFinal_Encrypt(ockContext, Key, IV, tagLenInBytes, input,
                         inputOffset, inputLen, output, outputOffset, authData);
                 authData = null; // Before returning from doFinal(), restore AAD to uninitialized state
-
+                System.out.println("Tao - 4");
                 if (generateIV) {
                     /*
                      * Generate the next internal AES-GCM initialization vector per NIST SP 800-38D
                      */
                     newIV = generateInternalIV(false).clone();
                 }
-
+                System.out.println("Tao - 5 ret: " + ret);
                 return ret;
             } else {
                 // decrypting
@@ -358,10 +360,11 @@ public final class AESGCMCipher extends CipherSpi implements AESConstants, GCMCo
                         || ((output.length - outputOffset) < (inputLen - tagLenInBytes))) {
                     throw new ShortBufferException("Output buffer too small");
                 }
-
+                System.out.println("Tao - A ");
                 int ret = GCMCipher.doGCMFinal_Decrypt(ockContext, Key, IV, tagLenInBytes, input,
                         inputOffset, inputLen, output, outputOffset, authData);
                 authData = null; // Before returning from doFinal(), restore AAD to uninitialized state
+                System.out.println("Tao - B ret: " + ret);
                 return ret;
             }
         } catch (AEADBadTagException e) {

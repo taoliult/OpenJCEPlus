@@ -125,6 +125,7 @@ final class XDHPrivateKeyImpl extends PKCS8Key implements XECPrivateKey, Seriali
         }
 
         this.curve = CurveUtil.getCurve(this.params.getName());
+        System.out.println("Tao Tao Debug - Private - 1: " + this.curve.name());
 
         try {
             if (CurveUtil.isFFDHE(this.curve))
@@ -252,10 +253,12 @@ final class XDHPrivateKeyImpl extends PKCS8Key implements XECPrivateKey, Seriali
                 bi3 = params[2].getBigInteger();
                 int size = bi1.bitLength();
                 this.curve = CurveUtil.getCurve(oid, size);
+                System.out.println("Tao Tao Debug - Private - 2: " + this.curve.name());
             } else
                 throw new IOException("This curve does not seem to be a valid XEC/FFDHE curve");
         } catch (IOException e) { // XEC curve
             this.curve = CurveUtil.getCurve(oid, null);
+            System.out.println("Tao Tao Debug - Private - 2: " + this.curve.name());
         }
 
         if (outStream != null) {

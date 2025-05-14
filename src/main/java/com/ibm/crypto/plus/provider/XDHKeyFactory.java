@@ -51,8 +51,10 @@ class XDHKeyFactory extends KeyFactorySpi {
 
     @Override
     protected PublicKey engineGeneratePublic(KeySpec keySpec) throws InvalidKeySpecException {
+        System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 1 ");
         try {
             if (keySpec instanceof XECPublicKeySpec) {
+                System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 2 ");
                 XECPublicKeySpec publicKeySpec = (XECPublicKeySpec) keySpec;
                 AlgorithmParameterSpec publicKeyParams = publicKeySpec.getParams();
                 NamedParameterSpec params = null;
@@ -62,14 +64,22 @@ class XDHKeyFactory extends KeyFactorySpi {
                     throw new InvalidParameterException("Invalid Parameters: " + publicKeyParams);
                 }
 
+                System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 2A - params.getName(): " + params.getName());
+                System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 2A - this.alg: " + this.alg);
+
                 //Validate algs match for key and keyfactory
                 if (this.alg != null && !(params.getName().equals(this.alg))) {
+                    System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 2C - this.alg: " + this.alg);
                     throw new InvalidKeySpecException("Parameters must be " + this.alg);
                 }
+
+                System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 2B - params.getName(): " + params.getName());
+                System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 2B - this.alg: " + this.alg);
 
                 BigInteger u = publicKeySpec.getU();
                 return new XDHPublicKeyImpl(provider, params, u);
             } else if (keySpec instanceof X509EncodedKeySpec) {
+                System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePublic - 3 ");
                 return new XDHPublicKeyImpl(provider, ((X509EncodedKeySpec) keySpec).getEncoded());
             } else
                 throw new InvalidKeySpecException("Inappropriate key specification");
@@ -83,6 +93,7 @@ class XDHKeyFactory extends KeyFactorySpi {
 
     @Override
     protected PrivateKey engineGeneratePrivate(KeySpec keySpec) throws InvalidKeySpecException {
+        System.out.println("Tao Tao Debug - XDHKeyFactory - engineGeneratePrivate - 1 ");
         try {
             if (keySpec instanceof XECPrivateKeySpec) {
                 XECPrivateKeySpec privateKeySpec = (XECPrivateKeySpec) keySpec;
@@ -119,8 +130,9 @@ class XDHKeyFactory extends KeyFactorySpi {
     protected <T extends KeySpec> T engineGetKeySpec(Key key, Class<T> keySpec)
             throws InvalidKeySpecException {
         AlgorithmParameterSpec params;
-
+        System.out.println("Tao Tao Debug - XDHKeyFactory - engineGetKeySpec - 1 ");
         try {
+            
             if (key instanceof XECPublicKey) {
                 // Determine valid key specs
                 Class<?> xecPubKeySpec = Class.forName("java.security.spec.XECPublicKeySpec");
@@ -175,7 +187,7 @@ class XDHKeyFactory extends KeyFactorySpi {
     @Override
     protected Key engineTranslateKey(Key key) throws InvalidKeyException {
         try {
-
+            System.out.println("Tao Tao Debug - XDHKeyFactory - engineTranslateKey - 1 ");
             if (key instanceof XECPublicKey) {
                 //Validate algs match for key and keyfactory
                 if (this.alg != null

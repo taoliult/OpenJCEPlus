@@ -132,16 +132,17 @@ int gslogFunctionExit(const char *functionName) {
 //
 //
 void ockCheckStatus(ICC_CTX *ctx) {
-    if (debug) {
+    //if (debug) {
         unsigned long errCode;
 
-        while ((errCode = ICC_ERR_get_error(ctx)) == 1) {
+        //while ((errCode = ICC_ERR_get_error(ctx)) == 1) {
+            errCode = ICC_ERR_get_error(ctx);
             char *err;
-            // gslogMessage("Generating error message");
+            gslogMessage("Generating error message");
             err = ICC_ERR_error_string(ctx, errCode, NULL);
             gslogMessage("%s", err);
-        }
-    }
+        //}
+    //}
 }
 
 //============================================================================

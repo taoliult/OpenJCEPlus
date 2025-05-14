@@ -94,7 +94,7 @@ abstract class XDHKeyPairGenerator extends KeyPairGeneratorSpi {
         } else {
             throw new InvalidAlgorithmParameterException("Invalid AlgorithmParameterSpec: " + params);
         }
-        
+        System.out.println("Tao Tao Debug - KeyPair - initialize: " + CurveUtil.getCurve(nps.getName()).name());
         initializeImpl(nps);
     }
 
@@ -112,6 +112,7 @@ abstract class XDHKeyPairGenerator extends KeyPairGeneratorSpi {
         }
 
         serviceCurve = CurveUtil.getCurve(params.getName());
+        System.out.println("Tao Tao Debug - KeyPair - 1: " + this.serviceCurve.name());
         namedSpec = params;
     }
 
@@ -122,6 +123,17 @@ abstract class XDHKeyPairGenerator extends KeyPairGeneratorSpi {
             XECKey xecKey = XECKey.generateKeyPair(provider.getOCKContext(), this.serviceCurve.ordinal(), keySize);
             XDHPrivateKeyImpl privKey = new XDHPrivateKeyImpl(provider, xecKey);
             XDHPublicKeyImpl pubKey = new XDHPublicKeyImpl(provider, xecKey, this.serviceCurve);
+
+        // Convert private key to a human-readable format
+        byte[] privateKeyBytes = privKey.getEncoded();
+        String privateKeyHex = ECUtils.bytesToHex(privateKeyBytes);
+        System.out.println("TAO Private Key: " + privateKeyHex);
+
+        // Convert public key to a human-readable format
+        byte[] publicKeyBytes = pubKey.getEncoded();
+        String publicKeyHex = ECUtils.bytesToHex(publicKeyBytes);
+        System.out.println("TAO Public Key: " + publicKeyHex);
+
             return new KeyPair(pubKey, privKey);
         } catch (Exception e) {
             throw provider.providerException("Failure in generateKeyPair", e);

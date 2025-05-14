@@ -153,6 +153,7 @@ public final class XECKey implements AsymmetricKey {
 
     public static XECKey createPublicKey(OCKContext ockContext, byte[] publicKeyBytes)
             throws OCKException {
+        System.out.println("Tao Tao Debug - XECKey - createPublicKey - 1 ");
         //final String methodName = "createPublicKey";
         if (ockContext == null)
             throw new IllegalArgumentException("context is null");

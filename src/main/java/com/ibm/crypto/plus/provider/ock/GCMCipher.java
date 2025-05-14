@@ -122,7 +122,7 @@ public final class GCMCipher {
             byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset,
             byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
-        //final String methodName="doGCMFinal_Decrypt ";
+        final String methodName="doGCMFinal_Decrypt ";
         int rc = 0;
         byte[] authenticationData;
 
@@ -193,12 +193,12 @@ public final class GCMCipher {
         int aadLen = authenticationData.length;
 
         long gcmCtx = getGCMContext(false, key.length, ockContext);
-
+        System.out.println("Tao - GCMCipher - 1 start");
         if (GCMHardwareFunctionPtr == 0)
             GCMHardwareFunctionPtr = NativeInterface
                     .do_GCM_checkHardwareGCMSupport(ockContext.getId());
 
-
+        System.out.println("Tao - GCMCipher - 1 end");
         if (iv.length + key.length + aadLen <= FastJNIParameterBufferSize && !disableGCMAcceleration
                 && (inputLen <= FastJNIInputBufferSize || GCMHardwareFunctionPtr != -1)) {
             FastJNIBuffer parameters = GCMCipher.parameterBuffer.get();
@@ -214,10 +214,12 @@ public final class GCMCipher {
                 FastJNIBuffer inputBuffer = GCMCipher.inputBuffer.get();
                 inputBuffer.put(0, input, inputOffset, inputLen);
                 parameters.put(iv.length + aadLen, key, 0, key.length);
-
+                System.out.println("Tao - GCMCipher - 2 start");
                 rc = NativeInterface.do_GCM_decryptFastJNI(ockContext.getId(), gcmCtx,
                         key.length, iv.length, 0, inputLen - tagLen, 0, aadLen, tagLen,
                         parameters.pointer(), inputBuffer.pointer(), outputBuffer.pointer());
+                System.out.println("Tao - GCMCipher - 2 rc: " + rc);
+                System.out.println("Tao - GCMCipher - 2 end");
                 // Copy Output + Tag out of native data buffer
                 outputBuffer.get(0, output, outputOffset, len);
             }
@@ -227,9 +229,12 @@ public final class GCMCipher {
                 throw new OCKException(ErrorCodes.get(rc));
             }
         } else {
+            System.out.println("Tao - GCMCipher - 3 start");
             rc = NativeInterface.do_GCM_decrypt(ockContext.getId(), gcmCtx, key, key.length, iv,
                     iv.length, input, inputOffset, inputLen - tagLen, output, outputOffset,
                     authenticationData, aadLen, tagLen);
+            System.out.println("Tao - GCMCipher - 3 rc: " + rc);
+            System.out.println("Tao - GCMCipher - 3 end");
             if (rc != 0) {
                 throw new OCKException(ErrorCodes.get(rc));
             }
@@ -244,7 +249,7 @@ public final class GCMCipher {
             byte[] aad) throws OCKException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException {
 
-        //final String methodName = "doGCMFinal_Encrypt ";
+        final String methodName = "doGCMFinal_Encrypt ";
         int outLen = 0;
         byte[] authenticationData;
         int outputBufLen = output.length;
@@ -318,7 +323,7 @@ public final class GCMCipher {
         int aadLen = authenticationData.length;
 
         long gcmCtx = getGCMContext(true, key.length, ockContext);
-
+        System.out.println("Tao - 1 - 1");
         if (GCMHardwareFunctionPtr == 0)
             GCMHardwareFunctionPtr = NativeInterface
                     .do_GCM_checkHardwareGCMSupport(ockContext.getId());
@@ -452,7 +457,7 @@ public final class GCMCipher {
             int outputOffset, byte[] aad)
             throws OCKException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
-        //final String methodName="do_GCM_InitForUpdateDecrypt ";
+        final String methodName="do_GCM_InitForUpdateDecrypt ";
         int rc = 0;
         byte[] authenticationData;
 
@@ -521,7 +526,7 @@ public final class GCMCipher {
             int outputOffset, byte[] aad)
             throws OCKException, IllegalStateException, ShortBufferException,
             IllegalBlockSizeException, BadPaddingException, AEADBadTagException {
-        //final String methodName="do_GCM_UpdForUpdateDecrypt ";
+        final String methodName="do_GCM_UpdForUpdateDecrypt ";
         int rc = 0;
 
 
@@ -595,7 +600,7 @@ public final class GCMCipher {
             int outputOffset, byte[] aad) throws OCKException, IllegalStateException,
             ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 
-        //final String methodName = "do_GCM_FinalForUpdateEncrypt ";
+        final String methodName = "do_GCM_FinalForUpdateEncrypt ";
         int outLen = 0;
         byte[] authenticationData;
         int outputBufLen = output.length;
@@ -704,7 +709,7 @@ public final class GCMCipher {
             int outputOffset, byte[] aad) throws OCKException, IllegalStateException,
             ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 
-        //final String methodName = "do_GCM_UpdForUpdateEncrypt ";
+        final String methodName = "do_GCM_UpdForUpdateEncrypt ";
         int outLen = 0;
         int outputBufLen = output.length;
         int rc = 0;
@@ -791,7 +796,7 @@ public final class GCMCipher {
             int outputOffset, byte[] aad) throws OCKException, IllegalStateException,
             ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 
-        //final String methodName = "do_GCM_InitForUpdateEncrypt ";
+        final String methodName = "do_GCM_InitForUpdateEncrypt ";
         int outLen = 0;
         byte[] authenticationData;
         int outputBufLen = output.length;
