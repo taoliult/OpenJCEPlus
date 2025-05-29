@@ -40,6 +40,8 @@ public class BaseTestXDH extends BaseTestJunit5 {
 
     @Test
     public void testXDH_X25519() throws Exception {
+        System.out.println(
+                "\n\n\n\n************************** Starting testXDH_X25519 ************************");
         String curveName = "X25519";
         NamedParameterSpec nps = new NamedParameterSpec(curveName);
         compute_xdh_key(curveName, nps);
@@ -48,40 +50,12 @@ public class BaseTestXDH extends BaseTestJunit5 {
 
     @Test
     public void testXDH_X448() throws Exception {
+        System.out.println(
+                "\n\n\n\n************************** Starting testXDH_X448 ************************");
         String curveName = "X448";
         NamedParameterSpec nps = new NamedParameterSpec(curveName);
         compute_xdh_key(curveName, nps);
         runKeyFactoryTest(curveName, nps);
-    }
-
-    public void runKeyFactoryTest(String curveName, NamedParameterSpec spec) throws Exception {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("XDH", getProviderName());
-        kpg.initialize(spec);
-        KeyPair keyPair = kpg.generateKeyPair();
-
-        AlgorithmParameterSpec params = ((XECPublicKey) keyPair.getPublic()).getParams();
-        if (!(params instanceof NamedParameterSpec)) {
-            throw new RuntimeException("Unexpected parameter type for public key.");
-        }
-
-        NamedParameterSpec namedParams = (NamedParameterSpec) params;
-        if (!curveName.equals(namedParams.getName())) {
-            throw new RuntimeException("Public key is not using " + curveName + " parameters!");
-        }
-
-        // Use KeyFactory to regenerate public key
-        KeyFactory keyFactory = KeyFactory.getInstance("XDH", getProviderName());
-        XECPublicKeySpec pubSpec = keyFactory.getKeySpec(
-            keyPair.getPublic(), XECPublicKeySpec.class);
-        PublicKey pubRegenerated = keyFactory.generatePublic(pubSpec);
-
-        // Compare regenerated key to original
-        if (keyPair.getPublic().equals(pubRegenerated)) {
-            System.out.println("Regenerated public key matches original.");
-            assertTrue(true);
-        } else {
-            throw new RuntimeException("Regenerated public key does not match original.");
-        }
     }
 
     @Test
@@ -693,6 +667,36 @@ public class BaseTestXDH extends BaseTestJunit5 {
             // expected
         }
         assertTrue(true);
+    }
+
+    public void runKeyFactoryTest(String curveName, NamedParameterSpec spec) throws Exception {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("XDH", getProviderName());
+        kpg.initialize(spec);
+        KeyPair keyPair = kpg.generateKeyPair();
+
+        AlgorithmParameterSpec params = ((XECPublicKey) keyPair.getPublic()).getParams();
+        if (!(params instanceof NamedParameterSpec)) {
+            throw new RuntimeException("Unexpected parameter type for public key.");
+        }
+
+        NamedParameterSpec namedParams = (NamedParameterSpec) params;
+        if (!curveName.equals(namedParams.getName())) {
+            throw new RuntimeException("Public key is not using " + curveName + " parameters!");
+        }
+
+        // Use KeyFactory to regenerate public key
+        KeyFactory keyFactory = KeyFactory.getInstance("XDH", getProviderName());
+        XECPublicKeySpec pubSpec = keyFactory.getKeySpec(
+            keyPair.getPublic(), XECPublicKeySpec.class);
+        PublicKey pubRegenerated = keyFactory.generatePublic(pubSpec);
+
+        // Compare regenerated key to original
+        if (keyPair.getPublic().equals(pubRegenerated)) {
+            System.out.println("Regenerated public key matches original.");
+            assertTrue(true);
+        } else {
+            throw new RuntimeException("Regenerated public key does not match original.");
+        }
     }
 
     // Convert from a byte array to a hexadecimal representation as a string.
