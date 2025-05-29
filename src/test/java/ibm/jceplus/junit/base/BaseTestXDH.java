@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.interfaces.XECPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -42,6 +43,7 @@ public class BaseTestXDH extends BaseTestJunit5 {
         String curveName = "X25519";
         NamedParameterSpec nps = new NamedParameterSpec(curveName);
         compute_xdh_key(curveName, nps);
+        runKeyFactoryTest(curveName, nps);
     }
 
     @Test
@@ -49,6 +51,37 @@ public class BaseTestXDH extends BaseTestJunit5 {
         String curveName = "X448";
         NamedParameterSpec nps = new NamedParameterSpec(curveName);
         compute_xdh_key(curveName, nps);
+        runKeyFactoryTest(curveName, nps);
+    }
+
+    public void runKeyFactoryTest(String curveName, NamedParameterSpec spec) throws Exception {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("XDH", getProviderName());
+        kpg.initialize(spec);
+        KeyPair keyPair = kpg.generateKeyPair();
+
+        AlgorithmParameterSpec params = ((XECPublicKey) keyPair.getPublic()).getParams();
+        if (!(params instanceof NamedParameterSpec)) {
+            throw new RuntimeException("Unexpected parameter type for public key.");
+        }
+
+        NamedParameterSpec namedParams = (NamedParameterSpec) params;
+        if (!curveName.equals(namedParams.getName())) {
+            throw new RuntimeException("Public key is not using " + curveName + " parameters!");
+        }
+
+        // Use KeyFactory to regenerate public key
+        KeyFactory keyFactory = KeyFactory.getInstance("XDH", getProviderName());
+        XECPublicKeySpec pubSpec = keyFactory.getKeySpec(
+            keyPair.getPublic(), XECPublicKeySpec.class);
+        PublicKey pubRegenerated = keyFactory.generatePublic(pubSpec);
+
+        // Compare regenerated key to original
+        if (keyPair.getPublic().equals(pubRegenerated)) {
+            System.out.println("Regenerated public key matches original.");
+            assertTrue(true);
+        } else {
+            throw new RuntimeException("Regenerated public key does not match original.");
+        }
     }
 
     @Test
