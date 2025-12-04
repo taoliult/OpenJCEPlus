@@ -32,7 +32,10 @@ public final class RSAKey implements AsymmetricKey {
 
     public static RSAKey generateKeyPair(OCKContext ockContext, int numBits, BigInteger e, OpenJCEPlusProvider provider)
             throws OCKException {
-        //final String methodName = "generateKeyPair ";
+        final String methodName = "generateKeyPair ";
+        System.out.println("TAO DEBUG - debPrefix: " + debPrefix);
+        System.out.println("TAO DEBUG - methodName: " + methodName);
+        System.out.println("TAO DEBUG - numBits: " + numBits);
         if (ockContext == null) {
             throw new IllegalArgumentException("context is null");
         }
