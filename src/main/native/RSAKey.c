@@ -43,6 +43,19 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
             gslogMessage("DETAIL_RSA  FAILURE ICC_RSA_generate_key");
         }
 #endif
+        printf(
+            "[JNI] RSAKEY_generate entry: ockCtx=%p, numBits=%d, e=%ld\n",
+            (void *)ockCtx,
+            (int)numBits,
+            (long)e
+        );
+        fflush(stdout);
+        
+        printf(
+            "RSAKEY_generate FAILED: ockCtx=%p\n",
+            (void *)ockCtx
+        );
+        fflush(stdout);
         ockCheckStatus(ockCtx);
         throwOCKException(env, 0, "ICC_RSA_generate_key() failed");
     } else {
