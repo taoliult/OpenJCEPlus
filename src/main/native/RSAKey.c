@@ -44,7 +44,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
         }
 #endif
         printf(
-            "[JNI] RSAKEY_generate entry: ockCtx=%p, numBits=%d, e=%ld\n",
+            "[NATIVE] RSAKEY_generate entry: ockCtx=%p, numBits=%d, e=%ld\n",
             (void *)ockCtx,
             (int)numBits,
             (long)e
@@ -52,11 +52,19 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
         fflush(stdout);
         
         printf(
-            "RSAKEY_generate FAILED: ockCtx=%p\n",
+            "[NATIVE] RSAKEY_generate FAILED: ockCtx=%p\n",
             (void *)ockCtx
         );
         fflush(stdout);
-        ockCheckStatus(ockCtx);
+
+        unsigned long errCode;
+        while ((errCode = ICC_ERR_get_error(ockCtx)) == 1) {
+            char *err;
+            gslogMessage("[NATIVE] Generating error message");
+            err = ICC_ERR_error_string(ockCtx, errCode, NULL);
+            gslogMessage("%s", err);
+        }
+
         throwOCKException(env, 0, "ICC_RSA_generate_key() failed");
     } else {
         rsaKeyId = (jlong)((intptr_t)ockRSA);
