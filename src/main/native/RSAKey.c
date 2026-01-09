@@ -57,12 +57,29 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
         );
         fflush(stdout);
 
+        // unsigned long errCode;
+        // while ((errCode = ICC_ERR_get_error(ockCtx)) == 1) {
+        //     char *err;
+        //     gslogMessage("[NATIVE] Generating error message");
+        //     err = ICC_ERR_error_string(ockCtx, errCode, NULL);
+        //     gslogMessage("%s", err);
+        // }
+
         unsigned long errCode;
-        while ((errCode = ICC_ERR_get_error(ockCtx)) == 1) {
-            char *err;
+        while ((errCode = ICC_ERR_get_error(ockCtx)) != 0) {
+            printf("[NATIVE] Generating error message\n");
+            fflush(stdout);
+            
+            char* err;
             gslogMessage("[NATIVE] Generating error message");
+            gslogMessage("[NATIVE] ICC error code: %lu (0x%lx)", errCode, errCode);
+
             err = ICC_ERR_error_string(ockCtx, errCode, NULL);
-            gslogMessage("%s", err);
+            if (err != NULL) {
+                gslogMessage("[NATIVE] ICC error string: %s", err);
+            } else {
+                gslogMessage("[NATIVE] ICC error string: <null>");
+            }
         }
 
         throwOCKException(env, 0, "ICC_RSA_generate_key() failed");
