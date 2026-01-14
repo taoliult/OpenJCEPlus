@@ -23,80 +23,93 @@
  * Method:    RSAKEY_generate
  * Signature: (JI)J
  */
+#if defined(__linux__) || defined(__APPLE__)
+  #include <pthread.h>
+  static unsigned long get_tid(void) {
+      return (unsigned long)pthread_self();
+  }
+#else
+  static unsigned long get_tid(void) { return 0; }
+#endif
+
+// Optional: global sequence to correlate calls across threads
+#if defined(__STDC_NO_ATOMICS__)
+static volatile unsigned long g_seq = 0;
+static unsigned long next_seq(void) { return ++g_seq; }
+#else
+#include <stdatomic.h>
+static _Atomic unsigned long g_seq = 0;
+static unsigned long next_seq(void) { return atomic_fetch_add(&g_seq, 1) + 1; }
+#endif
+
+static void dump_icc_errors(ICC_CTX *ockCtx, unsigned long tid, unsigned long seq) {
+    unsigned long errCode;
+    int idx = 0;
+
+    // Drain the queue fully
+    while ((errCode = ICC_ERR_get_error(ockCtx)) != 0) {
+        idx++;
+
+        char *errStr = ICC_ERR_error_string(ockCtx, errCode, NULL);
+
+        // Use ONE logging mechanism to reduce interleaving
+        fprintf(stderr,
+            "[NATIVE][tid=%lu][seq=%lu] ICC error #%d: code=%lu (0x%lx) str=%s\n",
+            tid, seq, idx, errCode, errCode,
+            (errStr != NULL) ? errStr : "<null>"
+        );
+    }
+
+    if (idx == 0) {
+        fprintf(stderr,
+            "[NATIVE][tid=%lu][seq=%lu] ICC error queue empty (no further details)\n",
+            tid, seq
+        );
+    }
+
+    fflush(stderr);
+}
+
 JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits, jlong e) {
+
     static const char *functionName = "NativeInterface.RSAKEY_generate";
+    ICC_CTX *ockCtx = (ICC_CTX *)((intptr_t)ockContextId);
+    ICC_RSA *ockRSA = NULL;
 
-    ICC_CTX *ockCtx   = (ICC_CTX *)((intptr_t)ockContextId);
-    ICC_RSA *ockRSA   = NULL;
-    jlong    rsaKeyId = 0;
+    unsigned long tid = get_tid();
+    unsigned long seq = next_seq();
 
-    if (debug) {
-        gslogFunctionEntry(functionName);
-    }
+    // Log BEFORE calling into ICC so you can correlate concurrency
+    fprintf(stderr,
+        "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate ENTER ctx=%p numBits=%d e=%ld\n",
+        tid, seq, (void*)ockCtx, (int)numBits, (long)e
+    );
+    fflush(stderr);
 
     ockRSA = ICC_RSA_generate_key(ockCtx, (int)numBits, (long)e, NULL, NULL);
+
     if (ockRSA == NULL) {
-#ifdef DEBUG_RSA_DETAIL
-        if (debug) {
-            gslogMessage("DETAIL_RSA  FAILURE ICC_RSA_generate_key");
-        }
-#endif
-        printf(
-            "[NATIVE] RSAKEY_generate entry: ockCtx=%p, numBits=%d, e=%ld\n",
-            (void *)ockCtx,
-            (int)numBits,
-            (long)e
+        fprintf(stderr,
+            "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate FAIL ctx=%p\n",
+            tid, seq, (void*)ockCtx
         );
-        fflush(stdout);
-        
-        printf(
-            "[NATIVE] RSAKEY_generate FAILED: ockCtx=%p\n",
-            (void *)ockCtx
-        );
-        fflush(stdout);
+        fflush(stderr);
 
-        // unsigned long errCode;
-        // while ((errCode = ICC_ERR_get_error(ockCtx)) == 1) {
-        //     char *err;
-        //     gslogMessage("[NATIVE] Generating error message");
-        //     err = ICC_ERR_error_string(ockCtx, errCode, NULL);
-        //     gslogMessage("%s", err);
-        // }
-
-        unsigned long errCode;
-        while ((errCode = ICC_ERR_get_error(ockCtx)) != 0) {
-            printf("[NATIVE] Generating error message\n");
-            fflush(stdout);
-            
-            char* err;
-            gslogMessage("[NATIVE] Generating error message");
-            gslogMessage("[NATIVE] ICC error code: %lu (0x%lx)", errCode, errCode);
-
-            err = ICC_ERR_error_string(ockCtx, errCode, NULL);
-            if (err != NULL) {
-                gslogMessage("[NATIVE] ICC error string: %s", err);
-            } else {
-                gslogMessage("[NATIVE] ICC error string: <null>");
-            }
-        }
+        dump_icc_errors(ockCtx, tid, seq);
 
         throwOCKException(env, 0, "ICC_RSA_generate_key() failed");
-    } else {
-        rsaKeyId = (jlong)((intptr_t)ockRSA);
-#ifdef DEBUG_RSA_DETAIL
-        if (debug) {
-            gslogMessage("DETAIL_RSA  rsaKeyId %lx", rsaKeyId);
-        }
-#endif
+        return 0;
     }
 
-    if (debug) {
-        gslogFunctionExit(functionName);
-    }
+    fprintf(stderr,
+        "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate OK  ctx=%p rsa=%p\n",
+        tid, seq, (void*)ockCtx, (void*)ockRSA
+    );
+    fflush(stderr);
 
-    return rsaKeyId;
+    return (jlong)((intptr_t)ockRSA);
 }
 
 //============================================================================
