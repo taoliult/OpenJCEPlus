@@ -16,6 +16,7 @@
 #include "com_ibm_crypto_plus_provider_ock_NativeInterface.h"
 #include "Utils.h"
 #include <stdint.h>
+#include <pthread.h>
 
 //============================================================================
 /*
@@ -23,50 +24,33 @@
  * Method:    RSAKEY_generate
  * Signature: (JI)J
  */
-#if defined(__linux__) || defined(__APPLE__)
-  #include <pthread.h>
-  static unsigned long get_tid(void) {
-      return (unsigned long)pthread_self();
-  }
-#else
-  static unsigned long get_tid(void) { return 0; }
-#endif
-
-// Optional: global sequence to correlate calls across threads
-#if defined(__STDC_NO_ATOMICS__)
 static volatile unsigned long g_seq = 0;
-static unsigned long next_seq(void) { return ++g_seq; }
-#else
-#include <stdatomic.h>
-static _Atomic unsigned long g_seq = 0;
-static unsigned long next_seq(void) { return atomic_fetch_add(&g_seq, 1) + 1; }
-#endif
+static unsigned long next_seq(void) {
+    return __sync_add_and_fetch(&g_seq, 1);
+}
+
+static unsigned long get_tid(void) {
+    return (unsigned long)pthread_self();
+}
 
 static void dump_icc_errors(ICC_CTX *ockCtx, unsigned long tid, unsigned long seq) {
     unsigned long errCode;
     int idx = 0;
 
-    // Drain the queue fully
     while ((errCode = ICC_ERR_get_error(ockCtx)) != 0) {
         idx++;
-
         char *errStr = ICC_ERR_error_string(ockCtx, errCode, NULL);
-
-        // Use ONE logging mechanism to reduce interleaving
         fprintf(stderr,
             "[NATIVE][tid=%lu][seq=%lu] ICC error #%d: code=%lu (0x%lx) str=%s\n",
             tid, seq, idx, errCode, errCode,
-            (errStr != NULL) ? errStr : "<null>"
-        );
+            (errStr != NULL) ? errStr : "<null>");
     }
 
     if (idx == 0) {
         fprintf(stderr,
-            "[NATIVE][tid=%lu][seq=%lu] ICC error queue empty (no further details)\n",
-            tid, seq
-        );
+            "[NATIVE][tid=%lu][seq=%lu] ICC error queue empty\n",
+            tid, seq);
     }
-
     fflush(stderr);
 }
 
@@ -74,27 +58,17 @@ JNIEXPORT jlong JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jint numBits, jlong e) {
 
-    static const char *functionName = "NativeInterface.RSAKEY_generate";
     ICC_CTX *ockCtx = (ICC_CTX *)((intptr_t)ockContextId);
     ICC_RSA *ockRSA = NULL;
 
     unsigned long tid = get_tid();
     unsigned long seq = next_seq();
 
-    // Log BEFORE calling into ICC so you can correlate concurrency
-    fprintf(stderr,
-        "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate ENTER ctx=%p numBits=%d e=%ld\n",
-        tid, seq, (void*)ockCtx, (int)numBits, (long)e
-    );
-    fflush(stderr);
-
     ockRSA = ICC_RSA_generate_key(ockCtx, (int)numBits, (long)e, NULL, NULL);
-
     if (ockRSA == NULL) {
         fprintf(stderr,
-            "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate FAIL ctx=%p\n",
-            tid, seq, (void*)ockCtx
-        );
+            "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate FAIL ctx=%p numBits=%d e=%ld\n",
+            tid, seq, (void*)ockCtx, (int)numBits, (long)e);
         fflush(stderr);
 
         dump_icc_errors(ockCtx, tid, seq);
@@ -102,12 +76,6 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
         throwOCKException(env, 0, "ICC_RSA_generate_key() failed");
         return 0;
     }
-
-    fprintf(stderr,
-        "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate OK  ctx=%p rsa=%p\n",
-        tid, seq, (void*)ockCtx, (void*)ockRSA
-    );
-    fflush(stderr);
 
     return (jlong)((intptr_t)ockRSA);
 }
