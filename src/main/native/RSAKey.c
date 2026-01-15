@@ -24,6 +24,8 @@
  * Method:    RSAKEY_generate
  * Signature: (JI)J
  */
+
+/* Sequence number for correlating calls */
 static volatile unsigned long g_seq = 0;
 static unsigned long next_seq(void) {
     return __sync_add_and_fetch(&g_seq, 1);
@@ -31,6 +33,63 @@ static unsigned long next_seq(void) {
 
 static unsigned long get_tid(void) {
     return (unsigned long)pthread_self();
+}
+
+/*
+ * Optional: if your ICC headers expose a status query, you can enable this.
+ * We do NOT assume the function exists; we guard it with macros so builds don't break.
+ *
+ * To enable, define ICC_HAVE_GET_STATUS at compile time and include the right header(s),
+ * and make sure ICC_STATUS is a concrete struct (not opaque).
+ *
+ * Example (only if it exists in your ICC):
+ *   int ICC_GetStatus(ICC_CTX *ctx, ICC_STATUS *st);
+ */
+static void dump_icc_ctx_info(ICC_CTX *ockCtx,
+                              jlong ockContextId,
+                              unsigned long tid,
+                              unsigned long seq,
+                              jint numBits,
+                              jlong e) {
+
+    /* Print pointer + numeric value so it matches Java's decimal prints */
+    fprintf(stderr,
+        "[NATIVE][tid=%lu][seq=%lu] ctx=%p ctxId(dec)=%ld javaCtxId(dec)=%ld numBits=%d e=%ld\n",
+        tid, seq,
+        (void*)ockCtx,
+        (long)(intptr_t)ockCtx,          /* pointer value as decimal */
+        (long)ockContextId,              /* value passed from Java */
+        (int)numBits,
+        (long)e
+    );
+    fflush(stderr);
+
+#ifdef ICC_HAVE_GET_STATUS
+    /* If available in your ICC headers, dump ICC_STATUS here */
+    ICC_STATUS st;
+    memset(&st, 0, sizeof(st));
+
+    int rc = ICC_GetStatus(ockCtx, &st);
+    fprintf(stderr,
+        "[NATIVE][tid=%lu][seq=%lu] ICC_GetStatus rc=%d\n",
+        tid, seq, rc
+    );
+
+    /* TODO: print st fields here once you paste ICC_STATUS_t definition */
+    /* Example (fake fields): fprintf(stderr, "  fips=%d\n", st.fips_mode); */
+
+    fflush(stderr);
+#endif
+
+#ifdef ICC_HAVE_GET_VERSION
+    /* If available, print ICC version/build strings */
+    const char *ver = ICC_GetVersionString(); /* name may differ */
+    fprintf(stderr,
+        "[NATIVE][tid=%lu][seq=%lu] ICC version: %s\n",
+        tid, seq, (ver != NULL) ? ver : "<null>"
+    );
+    fflush(stderr);
+#endif
 }
 
 static void dump_icc_errors(ICC_CTX *ockCtx, unsigned long tid, unsigned long seq) {
@@ -64,13 +123,21 @@ Java_com_ibm_crypto_plus_provider_ock_NativeInterface_RSAKEY_1generate(
     unsigned long tid = get_tid();
     unsigned long seq = next_seq();
 
+    /* Low-impact: only print this every so often, OR only on failure.
+       For now, print only on failure to reduce timing changes. */
+
     ockRSA = ICC_RSA_generate_key(ockCtx, (int)numBits, (long)e, NULL, NULL);
     if (ockRSA == NULL) {
         fprintf(stderr,
-            "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate FAIL ctx=%p numBits=%d e=%ld\n",
-            tid, seq, (void*)ockCtx, (int)numBits, (long)e);
+            "[NATIVE][tid=%lu][seq=%lu] RSAKEY_generate FAIL\n",
+            tid, seq
+        );
         fflush(stderr);
 
+        /* Print more context about the ctx + inputs */
+        dump_icc_ctx_info(ockCtx, ockContextId, tid, seq, numBits, e);
+
+        /* Drain ICC error queue */
         dump_icc_errors(ockCtx, tid, seq);
 
         throwOCKException(env, 0, "ICC_RSA_generate_key() failed");
