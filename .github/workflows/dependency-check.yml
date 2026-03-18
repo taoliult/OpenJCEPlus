@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# Copyright IBM Corp. 2023, 2026
+# Copyright IBM Corp. 2026, 2026
 #
 # This code is free software; you can redistribute it and/or modify it
 # under the terms provided by IBM in the LICENSE file that accompanied
@@ -11,7 +11,8 @@ name: GitHub Actions OpenJCEPlus Dependency Check
 run-name: ${{ github.actor }} is running scheduled dependency check 🚀
 on:
   schedule:
-    - cron: '0 1 * * 0'   # Sunday 01:00 UTC = Saturday 9:00 PM in Toronto during EDT
+    #- cron: '0 1 * * 0'   # Sunday 01:00 UTC = Saturday 9:00 PM in Toronto during EDT
+    - cron: '0 22 * * *'   # Every day 10:00 PM UTC = 6:00 PM Toronto during EDT
   workflow_dispatch:
 jobs:
   Dependency-Check-OpenJCEPlus:
