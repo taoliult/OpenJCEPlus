@@ -60,10 +60,7 @@ jobs:
         run: > 
           mvn
           --batch-mode
-          '-Dock.library.path=${{ github.workspace }}/OCK/'
           dependency-check:check
-        env:
-          GSKIT_HOME: ${{ github.workspace }}/OCK/jgsk_sdk
       - name: Upload dependency-check report
         if: always()
         uses: actions/upload-artifact@v4
