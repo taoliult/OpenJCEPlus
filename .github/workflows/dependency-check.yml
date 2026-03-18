@@ -49,60 +49,18 @@ jobs:
 #        uses: egor-tensin/vs-shell@v2
 #        with:
 #          arch: x64
-      - name: Checkout Open Cryptography Kit C
-        uses: actions/checkout@v4
-        with:
-          repository: IBM/OpenCryptographyKitC
-          ref: f3dde51a02675270adf994dc22c7f2853dc86ba6
-          path: ${{ github.workspace }}/OpenCryptographyKitC
-      - name: Compile Open Cryptography Kit C
-        run: |
-          cd ${{ github.workspace }}/OpenCryptographyKitC/icc
-          make -k OPSYS=AMD64_LINUX CONFIG=release create_all
-          export LD_LIBRARY_PATH=${{ github.workspace }}/OpenCryptographyKitC/openssl-1.1.1/
-          make -k OPSYS=AMD64_LINUX CONFIG=release all
-          make -k OPSYS=AMD64_LINUX CONFIG=release iccpkg
-          make -k OPSYS=AMD64_LINUX CONFIG=release show_config
-          cd ..
-          cd iccpkg
-          make -k OPSYS=AMD64_LINUX CONFIG=release all
-          cd ${{ github.workspace }}
-      - name: Extract OCK SDK and Binary Tar File
-        run: |
-          mkdir ${{ github.workspace }}/OCK
-          cd ${{ github.workspace }}/OCK
-          cp ${{ github.workspace }}/OpenCryptographyKitC/package/jgsk_crypto.tar .
-          cp ${{ github.workspace }}/OpenCryptographyKitC/package/jgsk_crypto_sdk.tar .
-          ls -al
-          tree
-          tar -xvf jgsk_crypto.tar
-          tar -xvf jgsk_crypto_sdk.tar
-          mkdir jgsk_sdk/lib64
-          cp ${{ matrix.gskit_lib_name }} jgsk_sdk/lib64
       - name: Setup Temurin JDK
         uses: actions/setup-java@v4
         with:
           java-version: '26-ea'
           distribution: 'temurin'
           architecture: 'x64'
-      - name: Run dependency-check update-only
-        run: > 
-          mvn
-          --batch-mode
-          '-Dock.library.path=${{ github.workspace }}/OCK/'
-          dependency-check:update-only
-          install
-          -DskipTests
-        env:
-          GSKIT_HOME: ${{ github.workspace }}/OCK/jgsk_sdk
       - name: Run dependency-check check
         run: > 
           mvn
           --batch-mode
           '-Dock.library.path=${{ github.workspace }}/OCK/'
           dependency-check:check
-          install
-          -DskipTests
         env:
           GSKIT_HOME: ${{ github.workspace }}/OCK/jgsk_sdk
       - name: Upload dependency-check report
@@ -111,11 +69,8 @@ jobs:
         with:
           name: dependency-check-report
           path: target/dependency-check-report.html
-
       - name: Add dependency-check summary
         if: always()
         run: |
-          echo "## Dependency Check Report" >> $GITHUB_STEP_SUMMARY
-          echo "The HTML report was uploaded as artifact: \`dependency-check-report\`." >> $GITHUB_STEP_SUMMARY
-
+          echo "The Dependency Check Report was uploaded as artifact: \`dependency-check-report\`." >> $GITHUB_STEP_SUMMARY
       - run: echo "🍏 This job's status is ${{ job.status }}."
