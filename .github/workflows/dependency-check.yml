@@ -11,8 +11,8 @@ name: GitHub Actions OpenJCEPlus Dependency Check
 run-name: ${{ github.actor }} is running scheduled dependency check 🚀
 on:
   schedule:
-    #- cron: '0 1 * * 0'   # Sunday 01:00 UTC = Saturday 9:00 PM in Toronto during EDT
-    - cron: '0 */5 * * *' # every 5 hours
+    #- cron: '0 10 * * 6,0' # 10:00 UTC = 6:00 AM EDT, Saturday and Sunday
+    - cron: '0 */10 * * *' # every 10 hours
   workflow_dispatch:
 jobs:
   Dependency-Check-OpenJCEPlus:
