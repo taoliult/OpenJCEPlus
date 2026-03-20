@@ -67,13 +67,6 @@ jobs:
         run: |
           echo "Listing existing DB caches with prefix: $PREFIX"
           gh cache list --repo "$REPO" --key "$PREFIX" --limit 100
-      - name: Restore OWASP Dependency-Check DB Cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.m2/repository/org/owasp/dependency-check-data
-          key: ${{ steps.cache-key.outputs.key }}
-          restore-keys: |
-            ${{ steps.cache-key.outputs.prefix }}
       - name: Show OWASP Dependency-Check DB Size Before Scan
         if: always()
         run: |
@@ -86,7 +79,25 @@ jobs:
             echo "DB size before scan: not present"
             echo "DB size before scan: not present" >> "$GITHUB_STEP_SUMMARY"
           fi
-      - name: Run OWASP Dependency-Check
+      - name: Restore OWASP Dependency-Check DB Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: ${{ steps.cache-key.outputs.key }}
+          restore-keys: |
+            ${{ steps.cache-key.outputs.prefix }}
+      - name: Run OWASP Dependency-Check update-only
+        run: |
+          mvn 
+          --batch-mode 
+          dependency-check:update-only
+      - name: Save Current OWASP Dependency-Check DB Cache
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: ${{ steps.cache-key.outputs.key }}
+      - name: Run OWASP Dependency-Check check
         run: > 
           mvn
           --batch-mode
@@ -103,12 +114,6 @@ jobs:
             echo "DB size after scan: not present"
             echo "DB size after scan: not present" >> "$GITHUB_STEP_SUMMARY"
           fi
-      - name: Save Current OWASP Dependency-Check DB Cache
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.m2/repository/org/owasp/dependency-check-data
-          key: ${{ steps.cache-key.outputs.key }}
       - name: Delete Older OWASP Dependency-Check DB Caches
         if: always()
         env:
