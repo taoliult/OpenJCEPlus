@@ -10,8 +10,8 @@
 name: GitHub Actions OpenJCEPlus Dependency Check
 run-name: ${{ github.actor }} is running scheduled dependency check 🚀
 on:
-  pull_request:
-    types: [opened]
+  #pull_request:
+  #  types: [opened]
   schedule:
     - cron: '0 10 * * 6,0' # 10:00 UTC = 6:00 AM EDT, Saturday and Sunday
   workflow_dispatch:
@@ -20,6 +20,7 @@ jobs:
     name: Scheduled OpenJCEPlus Dependency Check
     runs-on: ${{ matrix.os }}
     permissions:
+      actions: write
       checks: write
       contents: read
     strategy:
@@ -48,11 +49,67 @@ jobs:
           java-version: '26-ea'
           distribution: 'temurin'
           architecture: 'x64'
+      - name: Compute OWASP DB cache key
+        id: cache-key
+        run: |
+          echo "key=${{ runner.os }}-dependency-check-data-$(date +%F)" >> "$GITHUB_OUTPUT"
+          echo "prefix=${{ runner.os }}-dependency-check-data-" >> "$GITHUB_OUTPUT"
+      - name: Restore OWASP Dependency-Check DB cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: ${{ steps.cache-key.outputs.key }}
+          restore-keys: |
+            ${{ steps.cache-key.outputs.prefix }}
+      - name: Show OWASP DB size before scan
+        if: always()
+        run: |
+          DB_PATH="$HOME/.m2/repository/org/owasp/dependency-check-data"
+          if [ -d "$DB_PATH" ]; then
+            SIZE=$(du -sh "$DB_PATH" | cut -f1)
+            echo "OWASP DB size before scan: $SIZE"
+            echo "OWASP DB size before scan: \`$SIZE\`" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "OWASP DB size before scan: not present"
+            echo "OWASP DB size before scan: not present" >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Run dependency-check check
         run: > 
           mvn
           --batch-mode
           dependency-check:check
+      - name: Show OWASP DB size after scan
+        if: always()
+        run: |
+          DB_PATH="$HOME/.m2/repository/org/owasp/dependency-check-data"
+          if [ -d "$DB_PATH" ]; then
+            SIZE=$(du -sh "$DB_PATH" | cut -f1)
+            echo "OWASP DB size after scan: $SIZE"
+            echo "OWASP DB size after scan: \`$SIZE\`" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "OWASP DB size after scan: not present"
+            echo "OWASP DB size after scan: not present" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Save OWASP Dependency-Check DB cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: ${{ steps.cache-key.outputs.key }}
+      - name: Delete older OWASP DB caches
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          CURRENT_KEY: ${{ steps.cache-key.outputs.key }}
+          PREFIX: ${{ steps.cache-key.outputs.prefix }}
+        run: |
+          gh cache list --repo "$REPO" --key "$PREFIX" --limit 100 | while read -r id key size created last_accessed ref; do
+            if [ "$key" != "$CURRENT_KEY" ]; then
+              echo "Deleting old cache: $key"
+              gh cache delete "$key" --repo "$REPO" || true
+            fi
+          done
       - name: Upload dependency-check report
         if: always()
         uses: actions/upload-artifact@v4
