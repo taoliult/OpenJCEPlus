@@ -103,7 +103,7 @@ jobs:
             echo "DB size after scan: not present"
             echo "DB size after scan: not present" >> "$GITHUB_STEP_SUMMARY"
           fi
-      - name: Save the Current OWASP Dependency-Check DB Cache
+      - name: Save Current OWASP Dependency-Check DB Cache
         if: always()
         uses: actions/cache/save@v4
         with:
