@@ -52,8 +52,12 @@ jobs:
       - name: Compute OWASP DB cache key
         id: cache-key
         run: |
-          echo "key=${{ runner.os }}-dependency-check-data-$(date +%F)" >> "$GITHUB_OUTPUT"
-          echo "prefix=${{ runner.os }}-dependency-check-data-" >> "$GITHUB_OUTPUT"
+          KEY="${{ runner.os }}-dependency-check-data-$(date +%F)"
+          PREFIX="${{ runner.os }}-dependency-check-data-"
+          echo "Computed key: $KEY"
+          echo "Computed prefix: $PREFIX"
+          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+          echo "prefix=$PREFIX" >> "$GITHUB_OUTPUT"
       - name: Restore OWASP Dependency-Check DB cache
         uses: actions/cache/restore@v4
         with:
