@@ -52,7 +52,7 @@ jobs:
       - name: Compute OWASP DB cache key
         id: cache-key
         run: |
-          KEY="${{ runner.os }}-dependency-check-data-$(date +%F)"
+          KEY="${{ runner.os }}-dependency-check-data-$(date +%F)-${{ github.run_number }}-${{ github.run_attempt }}"
           PREFIX="${{ runner.os }}-dependency-check-data-"
           echo "Computed key: $KEY"
           echo "Computed prefix: $PREFIX"
