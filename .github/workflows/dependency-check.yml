@@ -87,8 +87,8 @@ jobs:
           restore-keys: |
             ${{ steps.cache-key.outputs.prefix }}
       - name: Run OWASP Dependency-Check update-only
-        run: |
-          mvn 
+        run: > 
+          mvn
           --batch-mode
           dependency-check:update-only
       - name: Save Current OWASP Dependency-Check DB Cache
