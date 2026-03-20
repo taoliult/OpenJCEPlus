@@ -49,16 +49,7 @@ jobs:
           java-version: '26-ea'
           distribution: 'temurin'
           architecture: 'x64'
-      - name: List OWASP DB caches
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PREFIX: ${{ steps.cache-key.outputs.prefix }}
-        run: |
-          echo "Listing caches with prefix: $PREFIX"
-          gh cache list --repo "$REPO" --key "$PREFIX" --limit 100
-      - name: Compute OWASP DB cache key
+      - name: Compute Current OWASP Dependency-Check DB Cache Key
         id: cache-key
         run: |
           KEY="${{ runner.os }}-dependency-check-data-$(date +%F)-${{ github.run_number }}-${{ github.run_attempt }}"
@@ -67,49 +58,58 @@ jobs:
           echo "Computed prefix: $PREFIX"
           echo "key=$KEY" >> "$GITHUB_OUTPUT"
           echo "prefix=$PREFIX" >> "$GITHUB_OUTPUT"
-      - name: Restore OWASP Dependency-Check DB cache
+      - name: List Existing OWASP Dependency-Check DB Caches
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PREFIX: ${{ steps.cache-key.outputs.prefix }}
+        run: |
+          echo "Listing existing DB caches with prefix: $PREFIX"
+          gh cache list --repo "$REPO" --key "$PREFIX" --limit 100
+      - name: Restore OWASP Dependency-Check DB Cache
         uses: actions/cache/restore@v4
         with:
           path: ~/.m2/repository/org/owasp/dependency-check-data
           key: ${{ steps.cache-key.outputs.key }}
           restore-keys: |
             ${{ steps.cache-key.outputs.prefix }}
-      - name: Show OWASP DB size before scan
+      - name: Show OWASP Dependency-Check DB Size Before Scan
         if: always()
         run: |
           DB_PATH="$HOME/.m2/repository/org/owasp/dependency-check-data"
           if [ -d "$DB_PATH" ]; then
             SIZE=$(du -sh "$DB_PATH" | cut -f1)
-            echo "OWASP DB size before scan: $SIZE"
-            echo "OWASP DB size before scan: \`$SIZE\`" >> "$GITHUB_STEP_SUMMARY"
+            echo "DB size before scan: $SIZE"
+            echo "DB size before scan: \`$SIZE\`" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "OWASP DB size before scan: not present"
-            echo "OWASP DB size before scan: not present" >> "$GITHUB_STEP_SUMMARY"
+            echo "DB size before scan: not present"
+            echo "DB size before scan: not present" >> "$GITHUB_STEP_SUMMARY"
           fi
-      - name: Run dependency-check check
+      - name: Run OWASP Dependency-Check
         run: > 
           mvn
           --batch-mode
           dependency-check:check
-      - name: Show OWASP DB size after scan
+      - name: Show OWASP Dependency-Check DB Size After Scan
         if: always()
         run: |
           DB_PATH="$HOME/.m2/repository/org/owasp/dependency-check-data"
           if [ -d "$DB_PATH" ]; then
             SIZE=$(du -sh "$DB_PATH" | cut -f1)
-            echo "OWASP DB size after scan: $SIZE"
-            echo "OWASP DB size after scan: \`$SIZE\`" >> "$GITHUB_STEP_SUMMARY"
+            echo "DB size after scan: $SIZE"
+            echo "DB size after scan: \`$SIZE\`" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "OWASP DB size after scan: not present"
-            echo "OWASP DB size after scan: not present" >> "$GITHUB_STEP_SUMMARY"
+            echo "DB size after scan: not present"
+            echo "DB size after scan: not present" >> "$GITHUB_STEP_SUMMARY"
           fi
-      - name: Save OWASP Dependency-Check DB cache
+      - name: Save the Current OWASP Dependency-Check DB Cache
         if: always()
         uses: actions/cache/save@v4
         with:
           path: ~/.m2/repository/org/owasp/dependency-check-data
           key: ${{ steps.cache-key.outputs.key }}
-      - name: Delete older OWASP DB caches
+      - name: Delete Older OWASP Dependency-Check DB Caches
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -123,13 +123,13 @@ jobs:
               gh cache delete "$key" --repo "$REPO" || true
             fi
           done
-      - name: Upload dependency-check report
+      - name: Upload OWASP Dependency-Check Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
           path: target/dependency-check-report.html
-      - name: Add dependency-check summary
+      - name: Add OWASP Dependency-Check Summary
         if: always()
         run: |
           echo "The Dependency Check Report was uploaded as artifact: \`dependency-check-report\`." >> $GITHUB_STEP_SUMMARY
