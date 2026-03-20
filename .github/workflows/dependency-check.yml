@@ -89,7 +89,7 @@ jobs:
       - name: Run OWASP Dependency-Check update-only
         run: |
           mvn 
-          --batch-mode 
+          --batch-mode
           dependency-check:update-only
       - name: Save Current OWASP Dependency-Check DB Cache
         if: success()
