@@ -87,6 +87,7 @@ jobs:
           restore-keys: |
             ${{ steps.cache-key.outputs.prefix }}
       - name: Run OWASP Dependency-Check update-only
+        id: dc-update
         run: > 
           mvn
           --batch-mode
@@ -119,7 +120,7 @@ jobs:
             echo "DB size after scan: not present" >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Delete Older OWASP Dependency-Check DB Caches
-        if: always()
+        if: success() && steps.dc-update.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
