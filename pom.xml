@@ -673,6 +673,7 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>12.2.0</version>
                 <configuration>
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
                     <!-- disable those analyzer OpenJCEPlus don't use -->
                     <nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
                     <nodeAuditAnalyzerEnabled>false</nodeAuditAnalyzerEnabled>

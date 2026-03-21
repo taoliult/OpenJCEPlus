@@ -91,6 +91,7 @@ jobs:
           mvn
           --batch-mode
           dependency-check:update-only
+          -DnvdApiKey=${{ secrets.NVD_API_KEY }}
       - name: Save Current OWASP Dependency-Check DB Cache
         if: success()
         uses: actions/cache/save@v4
@@ -102,6 +103,7 @@ jobs:
           mvn
           --batch-mode
           dependency-check:check
+          -DnvdApiKey=${{ secrets.NVD_API_KEY }}
       - name: Show OWASP Dependency-Check DB Size After Scan
         if: always()
         run: |
