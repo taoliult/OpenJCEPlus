@@ -93,7 +93,6 @@ jobs:
           --batch-mode
           dependency-check:update-only
           -DnvdApiDelay=12000
-          -DnvdApiKey=9d6513bd-a2f3-4690-b3fa-1ebc8238dcff
       - name: Save Current OWASP Dependency-Check DB Cache
         if: success()
         uses: actions/cache/save@v4
@@ -106,7 +105,6 @@ jobs:
           --batch-mode
           dependency-check:check
           -DnvdApiDelay=12000
-          -DnvdApiKey=9d6513bd-a2f3-4690-b3fa-1ebc8238dcff
       - name: Show OWASP Dependency-Check DB Size After Scan
         if: always()
         run: |
