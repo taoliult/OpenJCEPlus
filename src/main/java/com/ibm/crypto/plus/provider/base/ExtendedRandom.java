@@ -20,10 +20,10 @@ public final class ExtendedRandom {
     private static final int DEFAULT_RANDOM_BYTE_CACHE_SIZE_KB = 128;
     private static final int DEFAULT_BYPASS_THRESHOLD_KB = 16;
 
-    private static final int RANDOM_BYTE_CACHE_SIZE = Integer.getInteger("openjceplus.random.cache.size",
+    private static final int RANDOM_BYTE_CACHE_SIZE = Integer.getInteger("openjceplus.randomcachesize",
             DEFAULT_RANDOM_BYTE_CACHE_SIZE_KB) * 1024;
 
-    private static final int BYPASS_THRESHOLD = Integer.getInteger("openjceplus.random.bypass.threshold",
+    private static final int BYPASS_THRESHOLD = Integer.getInteger("openjceplus.randombypassthreshold",
             DEFAULT_BYPASS_THRESHOLD_KB) * 1024;
 
     private byte[] randomByteCache;
