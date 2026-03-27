@@ -14,7 +14,9 @@ public final class ExtendedRandom {
 
     OpenJCEPlusProvider provider;
     OCKContext ockContext;
-    final long ockPRNGContextId;
+    private long ockPRNGContextId;
+    private final String algName;
+    private boolean usingSharedContext = true;
 
     private static final ThreadLocal<PRNGContextPointer> prngContextBufferSha256 = new ThreadLocal<PRNGContextPointer>();
     private static final ThreadLocal<PRNGContextPointer> prngContextBufferSha512 = new ThreadLocal<PRNGContextPointer>();
@@ -34,12 +36,14 @@ public final class ExtendedRandom {
         }
 
         long ctxId = getPRNGContext(ockContext, algName, provider);
-        return new ExtendedRandom(ockContext, ctxId, provider);
+        return new ExtendedRandom(ockContext, ctxId, algName, provider);
     }
 
-    private ExtendedRandom(OCKContext ockContext, long ockPRNGContextId, OpenJCEPlusProvider provider) {
+    private ExtendedRandom(OCKContext ockContext, long ockPRNGContextId, String algName,
+            OpenJCEPlusProvider provider) {
         this.ockContext = ockContext;
         this.ockPRNGContextId = ockPRNGContextId;
+        this.algName = algName;
         this.provider = provider;
     }
 
@@ -85,8 +89,36 @@ public final class ExtendedRandom {
         }
 
         if (seed.length > 0) {
+            createNonSharedContextForReSeed();
             NativeInterface.EXTRAND_setSeed(ockContext.getId(), ockPRNGContextId, seed);
         }
+    }
+
+    private void createNonSharedContextForReSeed() throws OCKException {
+        if (!usingSharedContext) {
+            return;
+        }
+
+        long privateCtx = NativeInterface.EXTRAND_create(ockContext.getId(), algName);
+        this.ockPRNGContextId = privateCtx;
+        this.usingSharedContext = false;
+
+        this.provider.registerCleanable(this, cleanNonSharedOCKResources(privateCtx, ockContext.getId()));
+    }
+
+    private Runnable cleanNonSharedOCKResources(long ockPRNGContextId, long ockContext) {
+        return () -> {
+            try {
+                if (ockPRNGContextId != 0) {
+                    NativeInterface.EXTRAND_delete(ockContext, ockPRNGContextId);
+                }
+            } catch (Exception e) {
+                if (OpenJCEPlusProvider.getDebug() != null) {
+                    OpenJCEPlusProvider.getDebug().println("An error occurred while cleaning : " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 
     static class PRNGContextPointer {
