@@ -14,6 +14,5 @@ module openjceplus {
     exports com.ibm.crypto.plus.provider;
 
     provides java.security.Provider with 
-        com.ibm.crypto.plus.provider.OpenJCEPlus,
-        com.ibm.crypto.plus.provider.OpenJCEPlusInternal;
+        com.ibm.crypto.plus.provider.OpenJCEPlus;
 }
