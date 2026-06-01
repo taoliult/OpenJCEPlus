@@ -387,7 +387,10 @@ int getPublicKey(ICC_CTX *ockCtx, JNIEnv *env, ICC_EVP_PKEY *key,
     size_t pub_size;
     int    rc;
 
-    ICC_EVP_PKEY_get_raw_public_key(ockCtx, key, NULL, &pub_size);
+    rc = ICC_EVP_PKEY_get_raw_public_key(ockCtx, key, NULL, &pub_size);
+    if (rc != ICC_OSSL_SUCCESS) {
+        return -1;
+    }
     rc = ICC_EVP_PKEY_get_raw_public_key(ockCtx, key, buffer,
                                          &pub_size); /* Add public key */
 
@@ -1428,7 +1431,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1createPubl
         }
 #endif
         ptr = keyBytesNative;
-        ICC_d2i_PUBKEY(ockCtx, &ockEVPKey, (const unsigned char **)&ptr, size);
+        ockEVPKey = ICC_d2i_PUBKEY(ockCtx, &ockEVPKey, (const unsigned char **)&ptr, size);
 #ifdef DEBUG_EC_DETAIL
         if (debug) {
             gslogMessage("DETAIL_XEC ockEVPKey from ICC_d2i_PUBKEY=%lx",
@@ -1876,7 +1879,17 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1getPublicK
     size_t         size;
     jboolean       isCopy = 0;
 
-    ICC_EVP_PKEY_get_raw_public_key(ockCtx, ockEVPKey, NULL, &size);
+    rc = ICC_EVP_PKEY_get_raw_public_key(ockCtx, ockEVPKey, NULL, &size);
+    if (rc != ICC_OSSL_SUCCESS) {
+#ifdef DEBUG_EC_DETAIL
+        if (debug) {
+            gslogMessage("DETAIL_EC FAILURE ICC_EVP_PKEY_get_raw_public_key");
+        }
+#endif
+        ockCheckStatus(ockCtx);
+        throwOCKException(env, 0, "ICC_EVP_PKEY_get_raw_public_key failed");
+        return NULL;
+    }
     keyBytes = (*env)->NewByteArray(env, size);
     if (keyBytes == NULL) {
 #ifdef DEBUG_EC_DETAIL

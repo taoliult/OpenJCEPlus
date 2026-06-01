@@ -521,17 +521,24 @@ JNIEXPORT int CIPHER_encryptUpdate_internal(
     ICC_CTX *ockCtx, OCKCipher *ockCipher, unsigned char *plaintext,
     int plaintextLen, unsigned char *ciphertext, bool needsReinit) {
     int outLen = 0;
+    int rc = ICC_OSSL_SUCCESS;
     if (needsReinit) {
         if (ockCipher->copy_context == 0) {
-            ICC_EVP_CIPHER_CTX_copy(ockCtx, ockCipher->cipherCtx,
-                                    ockCipher->cached_context);
+            rc = ICC_EVP_CIPHER_CTX_copy(ockCtx, ockCipher->cipherCtx,
+                                         ockCipher->cached_context);
+            if (rc != ICC_OSSL_SUCCESS) {
+                return FAIL_CIPHER_INTERNAL_ENCRYPTUPDATE;
+            }
         } else {
-            ICC_EVP_EncryptInit(ockCtx, ockCipher->cipherCtx, NULL, NULL, NULL);
+            rc = ICC_EVP_EncryptInit(ockCtx, ockCipher->cipherCtx, NULL, NULL, NULL);
+            if (rc != ICC_OSSL_SUCCESS) {
+                return FAIL_CIPHER_INTERNAL_ENCRYPTUPDATE;
+            }
         }
     }
 
-    int rc = ICC_EVP_EncryptUpdate(ockCtx, ockCipher->cipherCtx, ciphertext,
-                                   &outLen, plaintext, plaintextLen);
+    rc = ICC_EVP_EncryptUpdate(ockCtx, ockCipher->cipherCtx, ciphertext,
+                               &outLen, plaintext, plaintextLen);
 
     if (ICC_OSSL_SUCCESS != rc) {
         return FAIL_CIPHER_INTERNAL_ENCRYPTUPDATE;
@@ -634,10 +641,16 @@ JNIEXPORT int CIPHER_encryptFinal_internal(
 
     if (needsReinit) {
         if (ockCipher->copy_context == 0) {
-            ICC_EVP_CIPHER_CTX_copy(ockCtx, ockCipher->cipherCtx,
-                                    ockCipher->cached_context);
+            rc = ICC_EVP_CIPHER_CTX_copy(ockCtx, ockCipher->cipherCtx,
+                                         ockCipher->cached_context);
+            if (rc != ICC_OSSL_SUCCESS) {
+                return FAIL_CIPHER_INTERNAL_ENCRYPTFINAL;
+            }
         } else {
-            ICC_EVP_EncryptInit(ockCtx, ockCipher->cipherCtx, NULL, NULL, NULL);
+            rc = ICC_EVP_EncryptInit(ockCtx, ockCipher->cipherCtx, NULL, NULL, NULL);
+            if (rc != ICC_OSSL_SUCCESS) {
+                return FAIL_CIPHER_INTERNAL_ENCRYPTFINAL;
+            }
         }
     }
 
@@ -758,13 +771,20 @@ JNIEXPORT int CIPHER_decryptUpdate_internal(
     ICC_CTX *ockCtx, OCKCipher *ockCipher, unsigned char *ciphertext,
     int ciphertextLen, unsigned char *plaintext, bool needsReinit) {
     int outLen = 0;
+    int rc = ICC_OSSL_SUCCESS;
 
     if (needsReinit) {
         if (ockCipher->copy_context == 0) {
-            ICC_EVP_CIPHER_CTX_copy(ockCtx, ockCipher->cipherCtx,
-                                    ockCipher->cached_context);
+            rc = ICC_EVP_CIPHER_CTX_copy(ockCtx, ockCipher->cipherCtx,
+                                         ockCipher->cached_context);
+            if (rc != ICC_OSSL_SUCCESS) {
+                return FAIL_CIPHER_INTERNAL_DECRYPTUPDATE;
+            }
         } else {
-            ICC_EVP_DecryptInit(ockCtx, ockCipher->cipherCtx, NULL, NULL, NULL);
+            rc = ICC_EVP_DecryptInit(ockCtx, ockCipher->cipherCtx, NULL, NULL, NULL);
+            if (rc != ICC_OSSL_SUCCESS) {
+                return FAIL_CIPHER_INTERNAL_DECRYPTUPDATE;
+            }
         }
     }
 
@@ -777,8 +797,8 @@ JNIEXPORT int CIPHER_decryptUpdate_internal(
     }
 #endif
 
-    int rc = ICC_EVP_DecryptUpdate(ockCtx, ockCipher->cipherCtx, plaintext,
-                                   &outLen, ciphertext, ciphertextLen);
+    rc = ICC_EVP_DecryptUpdate(ockCtx, ockCipher->cipherCtx, plaintext,
+                               &outLen, ciphertext, ciphertextLen);
     if (ICC_OSSL_SUCCESS != rc) {
         return FAIL_CIPHER_INTERNAL_DECRYPTUPDATE;
     } else {
@@ -870,10 +890,16 @@ JNIEXPORT int CIPHER_decryptFinal_internal(
 
     if (needsReinit) {
         if (ockCipher->copy_context == 0) {
-            ICC_EVP_CIPHER_CTX_copy(ockCtx, ockCipher->cipherCtx,
-                                    ockCipher->cached_context);
+            rc = ICC_EVP_CIPHER_CTX_copy(ockCtx, ockCipher->cipherCtx,
+                                         ockCipher->cached_context);
+            if (rc != ICC_OSSL_SUCCESS) {
+                return FAIL_CIPHER_INTERNAL_DECRYPTFINAL;
+            }
         } else {
-            ICC_EVP_DecryptInit(ockCtx, ockCipher->cipherCtx, NULL, NULL, NULL);
+            rc = ICC_EVP_DecryptInit(ockCtx, ockCipher->cipherCtx, NULL, NULL, NULL);
+            if (rc != ICC_OSSL_SUCCESS) {
+                return FAIL_CIPHER_INTERNAL_DECRYPTFINAL;
+            }
         }
     }
 

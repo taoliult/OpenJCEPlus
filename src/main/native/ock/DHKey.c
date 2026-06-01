@@ -695,8 +695,18 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getPrivateK
 #endif
         throwOCKException(env, 0, "ICC_EVP_PKEY_new failed");
     } else {
-        ICC_EVP_PKEY_set1_DH(ockCtx, ockPKey, ockDH);
-        size = ICC_i2d_PrivateKey(ockCtx, ockPKey, NULL);
+        rc = ICC_EVP_PKEY_set1_DH(ockCtx, ockPKey, ockDH);
+        if (rc != ICC_OSSL_SUCCESS) {
+            ockCheckStatus(ockCtx);
+#ifdef DEBUG_DH_DETAIL
+            if (debug) {
+                gslogMessage("DETAIL_DH FAILURE ICC_EVP_PKEY_set1_DH");
+            }
+#endif
+            throwOCKException(env, 0, "ICC_EVP_PKEY_set1_DH failed");
+        } else {
+            size = ICC_i2d_PrivateKey(ockCtx, ockPKey, NULL);
+        }
 
         if (size <= 0) {
             ockCheckStatus(ockCtx);
@@ -820,8 +830,18 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_DHKEY_1getPublicKe
 #endif
         throwOCKException(env, 0, "ICC_EVP_PKEY_new failed");
     } else {
-        ICC_EVP_PKEY_set1_DH(ockCtx, ockPKey, ockDH);
-        size = ICC_i2d_PUBKEY(ockCtx, ockPKey, NULL);
+        rc = ICC_EVP_PKEY_set1_DH(ockCtx, ockPKey, ockDH);
+        if (rc != ICC_OSSL_SUCCESS) {
+            ockCheckStatus(ockCtx);
+#ifdef DEBUG_DH_DETAIL
+            if (debug) {
+                gslogMessage("DETAIL_DH FAILURE ICC_EVP_PKEY_set1_DH");
+            }
+#endif
+            throwOCKException(env, 0, "ICC_EVP_PKEY_set1_DH failed");
+        } else {
+            size = ICC_i2d_PUBKEY(ockCtx, ockPKey, NULL);
+        }
 
         if (size <= 0) {
             ockCheckStatus(ockCtx);

@@ -222,16 +222,24 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1extract(
                 }
             }
 #endif
-            ICC_HKDF_Extract(ockCtx, ockHKDF->md, saltNative, (int)saltLen,
-                             inKeyNative, (int)inKeyLen, prkLocal, &prkLen);
-
-#ifdef DEBUG_HKDF_DATA
-            if (debug) {
-                gslogMessage("DATA_HKDF Extract prkLen : %d ", prkLen);
-                gslogMessagePrefix("DATA_HKDF Extracted Bytes : ");
-                gslogMessageHex((char *)prkLocal, 0, prkLen, 0, 0, NULL);
-            }
+            rc = ICC_HKDF_Extract(ockCtx, ockHKDF->md, saltNative, (int)saltLen,
+                                  inKeyNative, (int)inKeyLen, prkLocal, &prkLen);
+            if (rc != ICC_OSSL_SUCCESS) {
+#ifdef DEBUG_HKDF_DETAIL
+                if (debug) {
+                    gslogMessage("DETAIL_HKDF FAILURE ICC_HKDF_Extract");
+                }
 #endif
+                throwOCKException(env, 0, "ICC_HKDF_Extract failed");
+            } else {
+#ifdef DEBUG_HKDF_DATA
+                if (debug) {
+                    gslogMessage("DATA_HKDF Extract prkLen : %d ", prkLen);
+                    gslogMessagePrefix("DATA_HKDF Extracted Bytes : ");
+                    gslogMessageHex((char *)prkLocal, 0, prkLen, 0, 0, NULL);
+                }
+#endif
+            }
             prk = (*env)->NewByteArray(env, prkLen);
             if (prk == NULL) {
 #ifdef DEBUG_HKDF_DETAIL

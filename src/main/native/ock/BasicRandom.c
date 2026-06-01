@@ -91,7 +91,11 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1setSeed(
         gslogMessage("DETAIL_RANDOM size=%d", (int)size);
 #endif
 
-        ICC_RAND_seed(ockCtx, seedNative, size);
+        rc = ICC_RAND_seed(ockCtx, seedNative, size);
+        if (rc != ICC_OSSL_SUCCESS) {
+            ockCheckStatus(ockCtx);
+            throwOCKException(env, 0, "ICC_RAND_seed failed");
+        }
     }
 
     if (seedNative != NULL) {
@@ -130,7 +134,11 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_RAND_1generateSeed
     } else {
         size = (*env)->GetArrayLength(env, seed);
 
-        ICC_GenerateRandomSeed(ockCtx, &status, size, seedNative);
+        rc = ICC_GenerateRandomSeed(ockCtx, &status, size, seedNative);
+        if (rc != ICC_OSSL_SUCCESS) {
+            ockCheckStatus(ockCtx);
+            throwOCKException(env, 0, "ICC_GenerateRandomSeed failed");
+        }
 #ifdef DEBUG_RANDOM_DETAIL
         if (debug) {
             gslogMessage("DETAIL_RAND size=%d", (int)size);
