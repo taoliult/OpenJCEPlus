@@ -150,6 +150,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1extract(
     unsigned char *saltNative  = NULL;
     unsigned char *inKeyNative = NULL;
     jboolean       isCopy      = 0;
+    unsigned char *extractResult = NULL;
 
     unsigned char prkLocal[ICC_EVP_MAX_MD_SIZE];
     size_t        prkLen   = 0;
@@ -222,16 +223,26 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1extract(
                 }
             }
 #endif
-            ICC_HKDF_Extract(ockCtx, ockHKDF->md, saltNative, (int)saltLen,
-                             inKeyNative, (int)inKeyLen, prkLocal, &prkLen);
-
-#ifdef DEBUG_HKDF_DATA
-            if (debug) {
-                gslogMessage("DATA_HKDF Extract prkLen : %d ", prkLen);
-                gslogMessagePrefix("DATA_HKDF Extracted Bytes : ");
-                gslogMessageHex((char *)prkLocal, 0, prkLen, 0, 0, NULL);
-            }
+            extractResult = ICC_HKDF_Extract(ockCtx, ockHKDF->md, saltNative,
+                                             (int)saltLen, inKeyNative,
+                                             (int)inKeyLen, prkLocal, &prkLen);
+            if (extractResult == NULL) {
+                ockCheckStatus(ockCtx);
+#ifdef DEBUG_HKDF_DETAIL
+                if (debug) {
+                    gslogMessage("DETAIL_HKDF FAILURE ICC_HKDF_Extract");
+                }
 #endif
+                throwOCKException(env, 0, "ICC_HKDF_Extract failed");
+            } else {
+#ifdef DEBUG_HKDF_DATA
+                if (debug) {
+                    gslogMessage("DATA_HKDF Extract prkLen : %d ", prkLen);
+                    gslogMessagePrefix("DATA_HKDF Extracted Bytes : ");
+                    gslogMessageHex((char *)prkLocal, 0, prkLen, 0, 0, NULL);
+                }
+#endif
+            }
             prk = (*env)->NewByteArray(env, prkLen);
             if (prk == NULL) {
 #ifdef DEBUG_HKDF_DETAIL
@@ -386,6 +397,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1expand(
                 ockCtx, ockHKDF->md, prkNative, (int)prkLen, infoNative,
                 infoLen, okmLocal, okmLen);
             if (ptr == NULL) {
+                ockCheckStatus(ockCtx);
                 throwOCKException(env, 0, "ICC_HKDF_Expand failed");
             } else {
 #ifdef DEBUG_HKDF_DATA
@@ -570,6 +582,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_HKDF_1derive(
                                inKeyNative, (long)inKeyLen, infoNative,
                                (long)infoLen, resKeyLocal, resKeyLen);
                 if (ptr == NULL) {
+                    ockCheckStatus(ockCtx);
                     throwOCKException(env, 0, "ICC_HKDF failed");
                 } else {
 #ifdef DEBUG_HKDF_DATA
