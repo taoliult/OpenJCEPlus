@@ -28,9 +28,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 abstract class XDHKeyAgreement extends KeyAgreementSpi {
 
-    private static final int SECRET_BUFFER_SIZE_X25519 = 32;
-    private static final int SECRET_BUFFER_SIZE_X448 = 56;
-
     private OpenJCEPlusProvider provider = null;
     private long genCtx;
     private XECKey ockXecKeyPub = null;
@@ -102,17 +99,8 @@ abstract class XDHKeyAgreement extends KeyAgreementSpi {
         }
 
         try {
-            int secrectBufferSize = 0;
-            if (System.getProperty("os.name").equals("z/OS")) {
-                String curveName = ((NamedParameterSpec) xdhPublicKeyImpl.getParams()).getName();
-                if (NamedParameterSpec.X25519.getName().equalsIgnoreCase(curveName)) {
-                    secrectBufferSize = SECRET_BUFFER_SIZE_X25519; // X25519 secret buffer size
-                } else if (NamedParameterSpec.X448.getName().equalsIgnoreCase(curveName)) {
-                    secrectBufferSize = SECRET_BUFFER_SIZE_X448; // X448 secret buffer size
-                }
-            }
             this.secret = XECKey.computeECDHSecret(genCtx,
-                    ockXecKeyPub.getPKeyId(), ockXecKeyPriv.getPKeyId(), secrectBufferSize, provider);
+                    ockXecKeyPub.getPKeyId(), ockXecKeyPriv.getPKeyId(), provider);
         } catch (NativeException e) {
             //Validate the secret value for a small order point condition.
             byte orValue = (byte) 0;

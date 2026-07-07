@@ -2227,7 +2227,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_ECKEY_1computeECDH
 JNIEXPORT jbyteArray JNICALL
 Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1computeECDHSecret(
     JNIEnv *env, jclass thisObj, jlong ockContextId, jlong genCtx,
-    jlong pubXecKeyId, jlong privXecKeyId, jint secretBufferSize) {
+    jlong pubXecKeyId, jlong privXecKeyId) {
     static const char *functionName =
         "NativeInterface_XECKEY_1computeECDHSecret";
 
@@ -2239,7 +2239,6 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1computeECD
     jbyteArray        secretBytes       = NULL;
     unsigned char    *secretBytesNative = NULL;
     jboolean          isCopy            = 0;
-    size_t            required_len      = 0;
     size_t            secret_key_len    = 0;
     int               rc                = 0;
 
@@ -2266,32 +2265,17 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1computeECD
         goto cleanup;
     }
 
-    if (secretBufferSize > 0) {
-        /*
-         * On z/OS, querying the required secret size may not work properly.
-         * In that case, use the caller-provided secretBufferSize as the
-         * expected derived secret size.
-         */
-        required_len = (size_t) secretBufferSize;
-    } else {
-        /*
-         * Query the required secret size before deriving the secret.
-         * This avoids deriving into a buffer with an incorrect size.
-         */
-        rc = ICC_EVP_PKEY_derive(ockCtx, gen_ctx, NULL, &required_len); /* Get secret key size */
-        if (ICC_OSSL_SUCCESS != rc) {
-            throwOCKException(env, 0,
-                    "ICC_EVP_PKEY_derive failed to get secret size");
-            goto cleanup;
-        }
-        if (required_len == 0) {
-            throwOCKException(env, 0, "Derived secret size is zero");
-            goto cleanup;
-        }
-    }
-    secret_key_len = required_len;
+    /* NEW APPROACH:
+     * Determine buffer size using ICC_EVP_PKEY_size with the public key
+     */
+    secret_key_len = ICC_EVP_PKEY_size(ockCtx, ockPubXecKey);
 
-    secretBytes = (*env)->NewByteArray(env, secret_key_len); /* Create Java secret bytes array */
+    if (secret_key_len <= 0) {
+        throwOCKException(env, 0, "Derived secret size is zero");
+        goto cleanup;
+    }
+
+    secretBytes = (*env)->NewByteArray(env, (jsize)secret_key_len); /* Create Java secret bytes array */
     if (NULL == secretBytes) {
         throwOCKException(env, 0, "NewByteArray failed");
         goto cleanup;
@@ -2307,12 +2291,6 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_XECKEY_1computeECD
     rc = ICC_EVP_PKEY_derive(ockCtx, gen_ctx, secretBytesNative, &secret_key_len);
     if (ICC_OSSL_SUCCESS != rc) {
         throwOCKException(env, 0, "ICC_EVP_PKEY_derive failed to derive a key");
-        goto cleanup;
-    }
-
-    if (secret_key_len != required_len) {
-        throwOCKException(env, 0,
-                          "Derived secret size does not match required size");
         goto cleanup;
     }
 
