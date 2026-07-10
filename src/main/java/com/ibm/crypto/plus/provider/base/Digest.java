@@ -10,6 +10,7 @@ package com.ibm.crypto.plus.provider.base;
 
 import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.PrimitiveWrapper;
+import com.ibm.crypto.plus.provider.SystemAccessUtils;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +37,7 @@ public final class Digest implements Cloneable {
     final static int[] digestLengths = {32, 48, 64, 28, 20};
 
     //disable caching mechanism for windows OS
-    final static private boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+    final static private boolean isWindows = SystemAccessUtils.getProperty("os.name", "").startsWith("Windows");
 
     final static private int numContexts;
 
@@ -61,7 +62,7 @@ public final class Digest implements Cloneable {
         } else {
             try {
                 tmpNumContext = Integer
-                        .parseInt(System.getProperty(DIGEST_CONTEXT_CACHE_SIZE, "2048"));
+                        .parseInt(SystemAccessUtils.getProperty(DIGEST_CONTEXT_CACHE_SIZE, "2048"));
             } catch (NumberFormatException e) {
                 tmpNumContext = 0;
             }

@@ -8,10 +8,9 @@
 
 package com.ibm.crypto.plus.provider.ock;
 
+import com.ibm.crypto.plus.provider.SystemAccessUtils;
 import com.ibm.crypto.plus.provider.base.NativeInterface;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.security.ProviderException;
 import sun.security.util.Debug;
@@ -244,28 +243,7 @@ public abstract class NativeOCKAdapter implements NativeInterface {
             ockSigFileName = ockLoadPath + File.separator + "N" + File.separator + "icc"
                     + File.separator + "icclib" + File.separator + "ICCSIG.txt";
         }
-        BufferedReader br = null;
-        try {
-            String line;
-            String versionMarker = "# ICC Version ";
-            br = new BufferedReader(new FileReader(ockSigFileName));
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith(versionMarker)) {
-                    String version = line.substring(versionMarker.length()).trim();
-                    return version;
-                }
-            }
-        } catch (Exception e) {
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (Exception e) {
-                }
-            }
-        }
-
-        return null;
+        return SystemAccessUtils.readVersionFromFile(ockSigFileName, "# ICC Version ");
     }
 
     @Override

@@ -9,7 +9,6 @@
 package com.ibm.crypto.plus.provider;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -143,7 +142,7 @@ public class ProviderServiceReader {
                 throw new IOException("File not found: " + filePath);
             } else {
                 // this filePath != null && Files.exists(Paths.get(filePath))
-                rd = new BufferedReader(new FileReader(filePath));
+                rd = new BufferedReader(SystemAccessUtils.newFileReader(filePath));
             }
 
             pr.load(rd);
