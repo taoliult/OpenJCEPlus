@@ -1,0 +1,179 @@
+// OpenJCEPlus Security Manager policy file.
+//
+// PURPOSE
+// -------
+// This file grants the minimum permissions required for the OpenJCEPlus and
+// OpenJCEPlusFIPS providers to load and operate when a SecurityManager is
+// active.  It is intended to be used in two ways:
+//
+//   1. AS A STANDALONE TEST POLICY (append with '==' to replace defaults)
+//      Pass it on the JVM command line:
+//        -Djava.security.manager
+//        -Djava.security.policy==src/test/resources/openjceplus-securitymanager.policy
+//      (the double-'=' overrides ALL default policy URLs; the file must then
+//       be self-contained — it already includes the standard grants below.)
+//
+//   2. AS AN EXTENSION TO THE DEFAULT POLICY (append with '=')
+//      Pass it on the JVM command line:
+//        -Djava.security.manager
+//        -Djava.security.policy=src/test/resources/openjceplus-securitymanager.policy
+//      (single-'=' appends to the two default URLs already listed in
+//       ${java.home}/conf/security/java.security:
+//         policy.url.1=file:${java.home}/conf/security/java.policy
+//         policy.url.2=file:${user.home}/.java.policy
+//      In this mode the standard grants in the JDK's java.policy are
+//      inherited automatically — they already cover os.name, os.arch,
+//      os.version, file.separator, java.specification.version, etc.)
+//
+// JAVA VERSION CAVEAT
+// -------------------
+// The SecurityManager is deprecated for removal from Java 17 onwards and
+// is REMOVED in Java 25.  Tests that use this file must guard themselves
+// with a version check and skip on Java >= 25.
+//
+// RELATIONSHIP TO THE JDK DEFAULT POLICY
+// ----------------------------------------
+// The JDK ships ${java.home}/conf/security/java.policy which already grants
+// the following PropertyPermissions to ALL code (no codeBase restriction):
+//
+//   os.name, os.arch, os.version, file.separator, path.separator,
+//   line.separator, java.version, java.vendor, java.vendor.url,
+//   java.class.version, java.specification.version (and .vendor, .name),
+//   java.vm.specification.* , java.vm.version, java.vm.vendor, java.vm.name
+//
+// Therefore, when this file is used in APPEND mode (single '='), those
+// properties do NOT need to be repeated here.  They ARE included below
+// (marked [default-policy]) only to make this file fully self-sufficient
+// when used in OVERRIDE mode (double '==').
+//
+// PERMISSIONS THAT MUST BE ADDED TO THE JDK DEFAULT POLICY
+// ---------------------------------------------------------
+// When deploying OpenJCEPlus in an application server that already has a
+// SecurityManager policy, the administrator must add the permissions in the
+// "OpenJCEPlus-specific" sections below to whichever policy controls the
+// trust domain that contains the openjceplus module.
+// The recommended approach is a codeBase-scoped grant:
+//
+//   grant codeBase "jrt:/openjceplus" {
+//       ... (copy the non-[default-policy] entries below) ...
+//   };
+//
+// or, for an openjceplus.jar deployed outside the JRE image:
+//
+//   grant codeBase "file:/path/to/openjceplus.jar" {
+//       ... (copy the non-[default-policy] entries below) ...
+//   };
+//
+
+grant {
+    // ===================================================================
+    // [default-policy] Properties already in ${java.home}/conf/security/java.policy.
+    // Repeated here only so this file works stand-alone (override mode).
+    // When appending to the default policy these lines are redundant but
+    // harmless.
+    // ===================================================================
+    permission java.util.PropertyPermission "os.name",                   "read";
+    permission java.util.PropertyPermission "os.arch",                   "read";
+    permission java.util.PropertyPermission "os.version",                "read";
+    permission java.util.PropertyPermission "java.specification.version","read";
+    permission java.util.PropertyPermission "file.separator",            "read";
+    permission java.util.PropertyPermission "path.separator",            "read";
+    permission java.util.PropertyPermission "line.separator",            "read";
+    permission java.util.PropertyPermission "java.version",              "read";
+    permission java.util.PropertyPermission "java.vendor",               "read";
+    permission java.util.PropertyPermission "java.vendor.url",           "read";
+    permission java.util.PropertyPermission "java.class.version",        "read";
+    permission java.util.PropertyPermission "java.vm.version",           "read";
+    permission java.util.PropertyPermission "java.vm.vendor",            "read";
+    permission java.util.PropertyPermission "java.vm.name",              "read";
+
+    // ===================================================================
+    // OpenJCEPlus-specific permissions — NOT in the JDK default policy.
+    // These MUST be added to any environment deploying OpenJCEPlus with
+    // a SecurityManager.
+    // ===================================================================
+
+    // -- System properties read at class-initialisation time ------------
+    // java.home is needed to locate the OCK / jgskit native libraries
+    // when ock.library.path / jgskit.library.path are not overridden.
+    permission java.util.PropertyPermission "java.home",                 "read";
+
+    // OCK / jgskit library path overrides
+    permission java.util.PropertyPermission "ock.library.path",          "read";
+    permission java.util.PropertyPermission "jgskit.library.path",       "read";
+
+    // Provider tuning properties
+    permission java.util.PropertyPermission "openjceplus.cleaners.num",                                 "read";
+    permission java.util.PropertyPermission "openjceplus.allowLegacyHKDF",                              "read";
+    permission java.util.PropertyPermission "openjceplus.fips.devmodewarn",                             "read";
+    permission java.util.PropertyPermission "openjceplus.ec.allowIncorrectKeysizes",                    "read";
+    permission java.util.PropertyPermission "openjceplus.ec.legacy.defaultKeysize",                     "read";
+    permission java.util.PropertyPermission "openjceplus.disableSmallerECKeySizeForSharedKeyComputing", "read";
+    permission java.util.PropertyPermission "openjceplus.xdh.allowKeyPairGenerationInConstructor",      "read";
+    permission java.util.PropertyPermission "openjceplus.eddsa.allowKeyPairGenerationInConstructor",    "read";
+
+    // FIPS / OAEP / RSA keygen overrides
+    permission java.util.PropertyPermission "com.ibm.openjceplusfips.allowNonOAEP",                    "read";
+    permission java.util.PropertyPermission "com.ibm.openjceplusfips.allowLegacyRSAKeyGenValidation",  "read";
+
+    // Cipher / digest acceleration tuning
+    permission java.util.PropertyPermission "com.ibm.crypto.provider.DisableGCMAcceleration",          "read";
+    permission java.util.PropertyPermission "com.ibm.crypto.provider.DisableCCMAcceleration",          "read";
+    permission java.util.PropertyPermission "com.ibm.crypto.provider.DigestContextCacheSize",           "read";
+    permission java.util.PropertyPermission "com.ibm.crypto.provider.DoRSATypeChecking",                "read";
+
+    // JDK TLS KDF legacy mode (read by DHKeyAgreement)
+    permission java.util.PropertyPermission "jdk.crypto.KeyAgreement.legacyKDF",                       "read";
+
+    // -- Native library loading -----------------------------------------
+    // Required by NativeOCKImplementation.loadIfExists() → System.load().
+    // In production, replace the wildcard with the exact absolute path of
+    // the libjgskit and libjgsk8iccs libraries, e.g.:
+    //   permission java.lang.RuntimePermission "loadLibrary./opt/ibm/jdk/lib/libjgskit.so";
+    permission java.lang.RuntimePermission "loadLibrary.*";
+
+    // -- File-system read access ----------------------------------------
+    // Required to:
+    //   (a) verify the OCK library was loaded from the JRE directory
+    //       (NativeOCKAdapter.validateLibraryLocation)
+    //   (b) read ICCSIG.txt to verify the OCK library version
+    //       (NativeOCKAdapter.getExpectedLibraryVersion, when validateOCKVersion=true)
+    // In production, restrict to the exact JRE lib directory:
+    //   permission java.io.FilePermission "${java.home}/lib/-", "read";
+    //   permission java.io.FilePermission "${java.home}/bin/-", "read"; // Windows
+    permission java.io.FilePermission "<<ALL FILES>>", "read";
+
+    // -- Reflection --------------------------------------------------------
+    // Required by OpenJCEPlusService.newInstance() which uses
+    // Class.forName() + getConstructor() + newInstance() to instantiate
+    // algorithm implementation classes on behalf of the JCE framework.
+    permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+    permission java.lang.RuntimePermission         "accessDeclaredMembers";
+
+    // -- Access to JDK-internal sun.* packages -------------------------
+    // These are needed because OpenJCEPlus reuses JDK-internal ASN.1 /
+    // DER / key-encoding utilities from sun.security.*.
+    // On the module path the --add-exports flags in pom.xml handle this
+    // at compile- and run-time for the normal (non-SM) case; the
+    // RuntimePermissions below are the SecurityManager equivalent.
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.util";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.x509";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.pkcs";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.spec";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.interfaces";
+
+    // -- Provider installation -----------------------------------------
+    // Required to call Security.addProvider() / Security.insertProviderAt()
+    // and to register algorithm services via Provider.putService().
+    permission java.security.SecurityPermission "putProviderProperty.*";
+    permission java.security.SecurityPermission "insertProvider";
+    permission java.security.SecurityPermission "insertProvider.*";
+
+    // -- Miscellaneous JVM permissions ---------------------------------
+    permission java.lang.RuntimePermission "getProtectionDomain";
+    permission java.lang.RuntimePermission "getStackWalkerWithClassReference";
+
+    // -- Networking permission already in the JDK default policy ------
+    // [default-policy] Included for stand-alone / override mode only.
+    permission java.net.SocketPermission "localhost:0", "listen";
+};

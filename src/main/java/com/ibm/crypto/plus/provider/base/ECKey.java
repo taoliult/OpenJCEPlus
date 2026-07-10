@@ -12,6 +12,7 @@ import com.ibm.crypto.plus.provider.OpenJCEPlusProvider;
 import com.ibm.crypto.plus.provider.PrimitiveWrapper;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterFIPS;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
+import com.ibm.crypto.plus.provider.SystemAccessUtils;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.security.spec.ECParameterSpec;
@@ -20,7 +21,9 @@ import java.util.Arrays;
 public final class ECKey implements AsymmetricKey {
 
     private static final String ALLOW_INCORRECT_KEYSIZES = "openjceplus.ec.allowIncorrectKeysizes";
-    private static final boolean allowIncorrectKeysizes = Boolean.parseBoolean(System.getProperty(ALLOW_INCORRECT_KEYSIZES, "false"));
+
+    private static final boolean allowIncorrectKeysizes = Boolean.parseBoolean(
+            SystemAccessUtils.getProperty(ALLOW_INCORRECT_KEYSIZES, "false"));
 
     // The following is a special byte[] instance to indicate that the
     // private/public key bytes are available but not yet obtained.
