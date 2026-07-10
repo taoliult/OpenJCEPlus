@@ -139,11 +139,11 @@ public class ProviderServiceReader {
                 throw new IOException("No file or BufferedReader specified");
             } else if (null == filePath && this.reader != null) {
                 rd = this.reader;
-            } else if (filePath != null && !Files.exists(Paths.get(filePath))) {
+            } else if (filePath != null && !SystemAccessUtils.doPrivileged(() -> Files.exists(Paths.get(filePath)))) {
                 throw new IOException("File not found: " + filePath);
             } else {
                 // this filePath != null && Files.exists(Paths.get(filePath))
-                rd = new BufferedReader(new FileReader(filePath));
+                rd = new BufferedReader(SystemAccessUtils.doPrivilegedChecked(() -> new FileReader(filePath)));
             }
 
             pr.load(rd);
