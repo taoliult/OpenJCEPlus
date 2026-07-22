@@ -117,7 +117,7 @@ public final class OpenJCEPlusSemeruDefaults extends OpenJCEPlusProvider {
     // Get SecureRandom to use for crypto operations.
     java.security.SecureRandom getSecureRandom(java.security.SecureRandom userSecureRandom) {
         try {
-            return java.security.SecureRandom.getInstance("SHA256DRBG", this);
+            return java.security.SecureRandom.getInstance("SHA256DRBG");
         } catch (NoSuchAlgorithmException e) {
             throw new ProviderException("SecureRandom not available");
         }
