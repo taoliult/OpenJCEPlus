@@ -11,7 +11,7 @@ package com.ibm.crypto.plus.provider;
 import com.ibm.crypto.plus.provider.ock.NativeOCKAdapterNonFIPS;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProviderException;
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class OpenJCEPlusSemeruDefaults extends OpenJCEPlusProvider {
 
@@ -77,11 +77,12 @@ public final class OpenJCEPlusSemeruDefaults extends OpenJCEPlusProvider {
     }
 
     private static String generateRandomSuffix() {
-        return UUID.randomUUID()
-                .toString()
-                .replace("-", "")
-                .substring(0, 6)
-                .toUpperCase();
+        // ThreadLocalRandom has no dependency on the JCA provider framework,
+        // so it is safe to call during provider loading.  UUID.randomUUID()
+        // must NOT be used here because it calls SecureRandom, which triggers
+        // MessageDigest.getInstance(), which re-enters ProviderConfig and
+        // causes a "Recursion loading provider" warning.
+        return String.format("%06X", ThreadLocalRandom.current().nextInt(0x1000000));
     }
 
     // Return the instance of this class or create one if needed.
