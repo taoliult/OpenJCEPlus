@@ -1,0 +1,87 @@
+/*
+ * Copyright IBM Corp. 2026
+ *
+ * Java security policy for the OpenJCEPlus test suite.
+ *
+ * When tests run with -Djava.security.manager the JaCoCo coverage agent
+ * needs a broad set of permissions during premain() before the JVM main
+ * class starts:
+ *
+ *   - FilePermission       : create/write target/jacoco.exec
+ *   - RuntimePermission    : shutdownHooks, createClassLoader,
+ *                            accessDeclaredMembers, ...
+ *   - ReflectPermission    : suppressAccessChecks (AgentModule reflection)
+ *   - SocketPermission     : InetAddress.getLocalHost() for session ID
+ *
+ * Enumerating these one by one is fragile and re-breaks across JaCoCo
+ * releases, so AllPermission is granted to code loaded from the Maven
+ * local repository.  The scope is still tight: only JARs resolved from
+ * ~/.m2 (or the custom repo if -Dmaven.repo.local is set) receive this
+ * grant.  The OpenJCEPlus provider and application codebases are
+ * unaffected and continue to be governed by the JVM default policy.
+ *
+ * If a custom Maven local repository is used, add a second grant block:
+ *
+ *   grant codeBase "file:/path/to/custom/repo/-" {
+ *       permission java.security.AllPermission;
+ *   };
+ */
+grant codeBase "file:${user.home}/.m2/-" {
+    permission java.security.AllPermission;
+};
+
+/*
+ * Permissions for the OpenJCEPlus provider classes when loaded from the
+ * filesystem via --patch-module during Maven test runs.
+ *
+ * When surefire uses:
+ *   --patch-module openjceplus="target/classes:target/test-classes"
+ * the provider classes are loaded from file: URLs, not from jrt:/openjceplus.
+ * The Security Manager matches codeBase against the actual classloader URL, so
+ * the jrt:/openjceplus grant in the JVM default policy does NOT apply here.
+ * This grant covers the same permissions for the file:-loaded provider code.
+ *
+ * ${user.dir} is set to the project root by the surefire forked JVM, matching
+ * ${project.basedir} at runtime without requiring a Maven property expansion.
+ */
+grant codeBase "file:${user.dir}/target/classes/-" {
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.util";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.x509";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.pkcs";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.spec";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.interfaces";
+    permission java.lang.RuntimePermission "loadLibrary.*";
+    permission java.security.SecurityPermission "putProviderProperty.*";
+    permission java.security.SecurityPermission "clearProviderProperties.*";
+    permission java.security.SecurityPermission "removeProviderProperty.*";
+    permission java.io.FilePermission "<<ALL FILES>>", "read";
+    permission java.util.PropertyPermission "*", "read";
+};
+
+/*
+ * Same permissions for the test classes patched into the module.
+ * Test helpers loaded from target/test-classes/ need the same access
+ * since they are in the same --patch-module scope.
+ */
+grant codeBase "file:${user.dir}/target/test-classes/-" {
+    permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.util";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.x509";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.pkcs";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.spec";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.interfaces";
+    permission java.lang.RuntimePermission "loadLibrary.*";
+    permission java.lang.RuntimePermission "modifyThread";
+    permission java.security.SecurityPermission "insertProvider";
+    permission java.security.SecurityPermission "insertProvider.*";
+    permission java.security.SecurityPermission "removeProvider";
+    permission java.security.SecurityPermission "removeProvider.*";
+    permission java.security.SecurityPermission "putProviderProperty.*";
+    permission java.security.SecurityPermission "clearProviderProperties.*";
+    permission java.security.SecurityPermission "removeProviderProperty.*";
+    permission java.io.FilePermission "<<ALL FILES>>", "read, write, delete";
+    permission java.util.PropertyPermission "*", "read, write";
+    permission java.net.SocketPermission "localhost:0", "listen";
+    permission java.net.SocketPermission "localhost:1-65535", "connect,resolve,accept";
+    permission java.net.SocketPermission "127.0.0.1:1-65535", "connect,resolve,accept";
+};
