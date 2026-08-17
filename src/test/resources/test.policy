@@ -45,11 +45,7 @@ grant codeBase "file:${user.home}/.m2/-" {
  * ${project.basedir} at runtime without requiring a Maven property expansion.
  */
 grant codeBase "file:${user.dir}/target/classes/-" {
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.util";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.x509";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.pkcs";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.spec";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.interfaces";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.*";
     permission java.lang.RuntimePermission "loadLibrary.*";
     permission java.security.SecurityPermission "putProviderProperty.*";
     permission java.security.SecurityPermission "clearProviderProperties.*";
@@ -65,11 +61,7 @@ grant codeBase "file:${user.dir}/target/classes/-" {
  */
 grant codeBase "file:${user.dir}/target/test-classes/-" {
     permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.util";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.x509";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.pkcs";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.spec";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.internal.interfaces";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.security.*";
     permission java.lang.RuntimePermission "loadLibrary.*";
     permission java.lang.RuntimePermission "modifyThread";
     permission java.security.SecurityPermission "insertProvider";
