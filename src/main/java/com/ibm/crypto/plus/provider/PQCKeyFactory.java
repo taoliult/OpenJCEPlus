@@ -94,7 +94,7 @@ class PQCKeyFactory extends KeyFactorySpi {
         try {
             if (key instanceof PublicKey) {
                 // Determine valid key specs
-                Class<?> x509KeySpec = Class.forName("java.security.spec.X509EncodedKeySpec");
+                Class<?> x509KeySpec = SystemAccessUtils.forName("java.security.spec.X509EncodedKeySpec");
 
                 if (x509KeySpec.isAssignableFrom(keySpec)) {
                     return keySpec.cast(new X509EncodedKeySpec(key.getEncoded()));
@@ -103,7 +103,7 @@ class PQCKeyFactory extends KeyFactorySpi {
                 }
             } else if (key instanceof PrivateKey) {
                 // Determine valid key specs
-                Class<?> pkcs8KeySpec = Class.forName("java.security.spec.PKCS8EncodedKeySpec");
+                Class<?> pkcs8KeySpec = SystemAccessUtils.forName("java.security.spec.PKCS8EncodedKeySpec");
 
                 if (pkcs8KeySpec.isAssignableFrom(keySpec)) {
                     return keySpec.cast(new PKCS8EncodedKeySpec(key.getEncoded()));

@@ -118,8 +118,8 @@ public final class DSAKeyFactory extends KeyFactorySpi {
         try {
             if (key instanceof java.security.interfaces.DSAPublicKey) {
                 // Determine valid key specs
-                Class<?> dsaPubKeySpec = Class.forName("java.security.spec.DSAPublicKeySpec");
-                Class<?> x509KeySpec = Class.forName("java.security.spec.X509EncodedKeySpec");
+                Class<?> dsaPubKeySpec = SystemAccessUtils.forName("java.security.spec.DSAPublicKeySpec");
+                Class<?> x509KeySpec = SystemAccessUtils.forName("java.security.spec.X509EncodedKeySpec");
 
                 if (keySpec.isAssignableFrom(dsaPubKeySpec)) {
                     java.security.interfaces.DSAPublicKey dsaPubKey = (java.security.interfaces.DSAPublicKey) key;
@@ -137,8 +137,8 @@ public final class DSAKeyFactory extends KeyFactorySpi {
             } else if (key instanceof java.security.interfaces.DSAPrivateKey) {
 
                 // Determine valid key specs
-                Class<?> dsaPrivKeySpec = Class.forName("java.security.spec.DSAPrivateKeySpec");
-                Class<?> pkcs8KeySpec = Class.forName("java.security.spec.PKCS8EncodedKeySpec");
+                Class<?> dsaPrivKeySpec = SystemAccessUtils.forName("java.security.spec.DSAPrivateKeySpec");
+                Class<?> pkcs8KeySpec = SystemAccessUtils.forName("java.security.spec.PKCS8EncodedKeySpec");
 
                 if (keySpec.isAssignableFrom(dsaPrivKeySpec)) {
                     java.security.interfaces.DSAPrivateKey dsaPrivKey = (java.security.interfaces.DSAPrivateKey) key;

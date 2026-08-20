@@ -69,7 +69,7 @@ public final class DESedeParameters extends AlgorithmParametersSpi {
     protected <T extends AlgorithmParameterSpec> T engineGetParameterSpec(Class<T> paramSpec)
             throws InvalidParameterSpecException {
         try {
-            Class<?> ivParamSpec = Class.forName("javax.crypto.spec.IvParameterSpec");
+            Class<?> ivParamSpec = SystemAccessUtils.forName("javax.crypto.spec.IvParameterSpec");
             if (paramSpec.isAssignableFrom(ivParamSpec)) {
                 return paramSpec.cast(new IvParameterSpec(this.iv));
             } else {

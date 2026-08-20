@@ -137,8 +137,8 @@ public final class DHKeyFactory extends KeyFactorySpi {
             if (key instanceof javax.crypto.interfaces.DHPublicKey) {
 
                 // Determine valid key specs
-                Class<?> dhPubKeySpec = Class.forName("javax.crypto.spec.DHPublicKeySpec");
-                Class<?> x509KeySpec = Class.forName("java.security.spec.X509EncodedKeySpec");
+                Class<?> dhPubKeySpec = SystemAccessUtils.forName("javax.crypto.spec.DHPublicKeySpec");
+                Class<?> x509KeySpec = SystemAccessUtils.forName("java.security.spec.X509EncodedKeySpec");
 
                 if (keySpec.isAssignableFrom(dhPubKeySpec)) {
                     javax.crypto.interfaces.DHPublicKey dhPubKey = (javax.crypto.interfaces.DHPublicKey) key;
@@ -156,8 +156,8 @@ public final class DHKeyFactory extends KeyFactorySpi {
             } else if (key instanceof javax.crypto.interfaces.DHPrivateKey) {
 
                 // Determine valid key specs
-                Class<?> dhPrivKeySpec = Class.forName("javax.crypto.spec.DHPrivateKeySpec");
-                Class<?> pkcs8KeySpec = Class.forName("java.security.spec.PKCS8EncodedKeySpec");
+                Class<?> dhPrivKeySpec = SystemAccessUtils.forName("javax.crypto.spec.DHPrivateKeySpec");
+                Class<?> pkcs8KeySpec = SystemAccessUtils.forName("java.security.spec.PKCS8EncodedKeySpec");
 
                 if (keySpec.isAssignableFrom(dhPrivKeySpec)) {
                     javax.crypto.interfaces.DHPrivateKey dhPrivKey = (javax.crypto.interfaces.DHPrivateKey) key;

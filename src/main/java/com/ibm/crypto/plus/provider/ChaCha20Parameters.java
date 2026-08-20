@@ -62,7 +62,7 @@ public final class ChaCha20Parameters extends AlgorithmParametersSpi implements 
     protected <T extends AlgorithmParameterSpec> T engineGetParameterSpec(Class<T> paramSpec)
             throws InvalidParameterSpecException {
         try {
-            Class<?> chaCha20ParamSpec = Class.forName("javax.crypto.spec.ChaCha20ParameterSpec");
+            Class<?> chaCha20ParamSpec = SystemAccessUtils.forName("javax.crypto.spec.ChaCha20ParameterSpec");
             if (paramSpec.isAssignableFrom(chaCha20ParamSpec)) {
                 return paramSpec.cast(new ChaCha20ParameterSpec(this.nonce, this.counter));
             } else {

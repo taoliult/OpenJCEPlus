@@ -85,7 +85,7 @@ public final class DHParameters extends AlgorithmParametersSpi implements java.i
     protected <T extends AlgorithmParameterSpec> T engineGetParameterSpec(Class<T> paramSpec)
             throws InvalidParameterSpecException {
         try {
-            Class<?> dhParamSpec = Class.forName("javax.crypto.spec.DHParameterSpec");
+            Class<?> dhParamSpec = SystemAccessUtils.forName("javax.crypto.spec.DHParameterSpec");
             if (paramSpec.isAssignableFrom(dhParamSpec)) {
                 return paramSpec.cast(new DHParameterSpec(this.p, this.g, this.l));
             } else {

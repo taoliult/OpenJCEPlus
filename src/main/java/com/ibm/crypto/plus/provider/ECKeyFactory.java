@@ -96,8 +96,8 @@ public final class ECKeyFactory extends KeyFactorySpi {
         try {
             if (key instanceof java.security.interfaces.ECPublicKey) {
                 // Determine valid key specs
-                Class<?> ecPubKeySpec = Class.forName("java.security.spec.ECPublicKeySpec");
-                Class<?> x509KeySpec = Class.forName("java.security.spec.X509EncodedKeySpec");
+                Class<?> ecPubKeySpec = SystemAccessUtils.forName("java.security.spec.ECPublicKeySpec");
+                Class<?> x509KeySpec = SystemAccessUtils.forName("java.security.spec.X509EncodedKeySpec");
 
                 if (keySpec.isAssignableFrom(ecPubKeySpec)) {
                     java.security.interfaces.ECPublicKey ecPubKey = (java.security.interfaces.ECPublicKey) key;
@@ -114,8 +114,8 @@ public final class ECKeyFactory extends KeyFactorySpi {
             } else if (key instanceof java.security.interfaces.ECPrivateKey) {
 
                 // Determine valid key specs
-                Class<?> ecPrivKeySpec = Class.forName("java.security.spec.ECPrivateKeySpec");
-                Class<?> pkcs8KeySpec = Class.forName("java.security.spec.PKCS8EncodedKeySpec");
+                Class<?> ecPrivKeySpec = SystemAccessUtils.forName("java.security.spec.ECPrivateKeySpec");
+                Class<?> pkcs8KeySpec = SystemAccessUtils.forName("java.security.spec.PKCS8EncodedKeySpec");
 
                 if (keySpec.isAssignableFrom(ecPrivKeySpec)) {
                     java.security.interfaces.ECPrivateKey ecPrivKey = (java.security.interfaces.ECPrivateKey) key;

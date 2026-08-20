@@ -146,8 +146,8 @@ class XDHKeyFactory extends KeyFactorySpi {
         try {
             if (key instanceof XECPublicKey) {
                 // Determine valid key specs
-                Class<?> xecPubKeySpec = Class.forName("java.security.spec.XECPublicKeySpec");
-                Class<?> x509KeySpec = Class.forName("java.security.spec.X509EncodedKeySpec");
+                Class<?> xecPubKeySpec = SystemAccessUtils.forName("java.security.spec.XECPublicKeySpec");
+                Class<?> x509KeySpec = SystemAccessUtils.forName("java.security.spec.X509EncodedKeySpec");
 
                 if (keySpec.isAssignableFrom(xecPubKeySpec)) {
                     XECPublicKey xecPubKey = (XECPublicKey) key;
@@ -169,8 +169,8 @@ class XDHKeyFactory extends KeyFactorySpi {
             } else if (key instanceof XECPrivateKey) {
 
                 // Determine valid key specs
-                Class<?> xecPrivKeySpec = Class.forName("java.security.spec.XECPrivateKeySpec");
-                Class<?> pkcs8KeySpec = Class.forName("java.security.spec.PKCS8EncodedKeySpec");
+                Class<?> xecPrivKeySpec = SystemAccessUtils.forName("java.security.spec.XECPrivateKeySpec");
+                Class<?> pkcs8KeySpec = SystemAccessUtils.forName("java.security.spec.PKCS8EncodedKeySpec");
 
                 if (keySpec.isAssignableFrom(xecPrivKeySpec)) {
                     XECPrivateKey xecPrivKey = (XECPrivateKey) key;

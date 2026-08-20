@@ -233,8 +233,8 @@ public class RSAKeyFactory extends KeyFactorySpi {
         try {
             if (key instanceof java.security.interfaces.RSAPublicKey) {
                 // Determine valid key specs
-                Class<?> rsaPubKeySpec = Class.forName("java.security.spec.RSAPublicKeySpec");
-                Class<?> x509KeySpec = Class.forName("java.security.spec.X509EncodedKeySpec");
+                Class<?> rsaPubKeySpec = SystemAccessUtils.forName("java.security.spec.RSAPublicKeySpec");
+                Class<?> x509KeySpec = SystemAccessUtils.forName("java.security.spec.X509EncodedKeySpec");
                 if (keySpec.isAssignableFrom(rsaPubKeySpec)) {
                     java.security.interfaces.RSAPublicKey rsaPubKey = (java.security.interfaces.RSAPublicKey) key;
                     return keySpec.cast(new RSAPublicKeySpec(rsaPubKey.getModulus(),
@@ -246,8 +246,8 @@ public class RSAKeyFactory extends KeyFactorySpi {
                 }
             } else if (key instanceof java.security.interfaces.RSAPrivateCrtKey) {
                 // Determine valid key specs
-                Class<?> rsaPrivKeySpec = Class.forName("java.security.spec.RSAPrivateKeySpec");
-                Class<?> pkcs8KeySpec = Class.forName("java.security.spec.PKCS8EncodedKeySpec");
+                Class<?> rsaPrivKeySpec = SystemAccessUtils.forName("java.security.spec.RSAPrivateKeySpec");
+                Class<?> pkcs8KeySpec = SystemAccessUtils.forName("java.security.spec.PKCS8EncodedKeySpec");
                 if (keySpec.isAssignableFrom(RSAPrivateCrtKeySpec.class)) {
                     java.security.interfaces.RSAPrivateCrtKey rsaPrivCrtKey = (java.security.interfaces.RSAPrivateCrtKey) key;
                     return keySpec.cast(new RSAPrivateCrtKeySpec(rsaPrivCrtKey.getModulus(),
@@ -267,8 +267,8 @@ public class RSAKeyFactory extends KeyFactorySpi {
                 }
             } else if (key instanceof java.security.interfaces.RSAPrivateKey) {
                 // Determine valid key specs
-                Class<?> rsaPrivKeySpec = Class.forName("java.security.spec.RSAPrivateKeySpec");
-                Class<?> pkcs8KeySpec = Class.forName("java.security.spec.PKCS8EncodedKeySpec");
+                Class<?> rsaPrivKeySpec = SystemAccessUtils.forName("java.security.spec.RSAPrivateKeySpec");
+                Class<?> pkcs8KeySpec = SystemAccessUtils.forName("java.security.spec.PKCS8EncodedKeySpec");
                 if (keySpec.isAssignableFrom(rsaPrivKeySpec)) {
                     java.security.interfaces.RSAPrivateKey rsaPrivKey = (java.security.interfaces.RSAPrivateKey) key;
                     return keySpec.cast(new RSAPrivateKeySpec(rsaPrivKey.getModulus(),
