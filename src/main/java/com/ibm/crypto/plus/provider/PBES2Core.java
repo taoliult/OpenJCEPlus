@@ -41,7 +41,7 @@ abstract class PBES2Core extends CipherSpi {
      */
     PBES2Core(String kdfAlgo, String cipherAlgo, int keySize, OpenJCEPlusProvider provider)
         throws NoSuchAlgorithmException, NoSuchPaddingException {
-        
+
         blkSize = AESCipher.AES_BLOCK_SIZE;
         this.cipherAlgo = cipherAlgo;
         keyLength = keySize * 8;
@@ -49,23 +49,23 @@ abstract class PBES2Core extends CipherSpi {
         this.provider = provider;
 
         if (cipherAlgo.equalsIgnoreCase("AES")) {
-            cipher = new AESCipher(provider);
+            cipher = new AESCipher(provider, pbeAlgo);
 
             switch (kdfAlgo.toLowerCase()) {
                 case "hmacsha1":
-                    kdf = new PBKDF2Core.HmacSHA1(provider);
+                    kdf = new PBKDF2Core.HmacSHA1(provider, "Cipher", pbeAlgo);
                     break;
                 case "hmacsha224":
-                    kdf = new PBKDF2Core.HmacSHA224(provider);
+                    kdf = new PBKDF2Core.HmacSHA224(provider, "Cipher", pbeAlgo);
                     break;
                 case "hmacsha256":
-                    kdf = new PBKDF2Core.HmacSHA256(provider);
+                    kdf = new PBKDF2Core.HmacSHA256(provider, "Cipher", pbeAlgo);
                     break;
                 case "hmacsha384":
-                    kdf = new PBKDF2Core.HmacSHA384(provider);
+                    kdf = new PBKDF2Core.HmacSHA384(provider, "Cipher", pbeAlgo);
                     break;
                 case "hmacsha512":
-                    kdf = new PBKDF2Core.HmacSHA512(provider);
+                    kdf = new PBKDF2Core.HmacSHA512(provider, "Cipher", pbeAlgo);
                     break;
                 default:
                     throw new NoSuchAlgorithmException(
