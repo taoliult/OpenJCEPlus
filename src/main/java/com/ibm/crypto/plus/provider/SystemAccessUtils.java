@@ -158,4 +158,50 @@ public final class SystemAccessUtils {
         }
     }
 
+    /**
+     * Pre-loads all {@code sun.security.util} classes used anywhere in the
+     * OpenJCEPlus provider under {@code doPrivileged}.
+     *
+     * The SecurityManager's {@code checkPackageAccess} check fires only the
+     * first time a class in a restricted package is loaded via the application
+     * class loader, and it walks every frame on the call stack at that moment.
+     * If an unprivileged frame (e.g. a jtreg test class) is present during that
+     * first load the check fails. By forcing the load here, during provider
+     * static initialisation before any unprivileged code ever runs, the classes
+     * are already in the JVM's class cache when unprivileged frame is later
+     * called, so the check is never triggered again.
+     *
+     * Exceptions during pre-loading are ignored: if a class cannot be loaded
+     * here, the real failure will surface naturally when the class is first used.
+     */
+    @SuppressWarnings("removal")
+    public static void preloadSunSecurityUtilClasses() {
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            String[] classes = {
+                "sun.security.util.BitArray",
+                "sun.security.util.CurveDB",
+                "sun.security.util.Debug",
+                "sun.security.util.DerInputStream",
+                "sun.security.util.DerOutputStream",
+                "sun.security.util.DerValue",
+                "sun.security.util.ECKeySizeParameterSpec",
+                "sun.security.util.ECUtil",
+                "sun.security.util.HexDumpEncoder",
+                "sun.security.util.KeyUtil",
+                "sun.security.util.KnownOIDs",
+                "sun.security.util.NamedCurve",
+                "sun.security.util.ObjectIdentifier",
+                "sun.security.util.PBEUtil",
+            };
+            for (String cls : classes) {
+                try {
+                    Class.forName(cls);
+                } catch (ClassNotFoundException ignored) {
+                    // not available on this JDK, harmless
+                }
+            }
+            return null;
+        });
+    }
+
 }
