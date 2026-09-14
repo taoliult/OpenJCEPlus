@@ -336,9 +336,7 @@ abstract class PBES2Parameters extends AlgorithmParametersSpi {
             pBKDF2_params.putInteger(keysize / 8); // derived key length (in octets)
         }
 
-        // prf AlgorithmIdentifier DEFAULT algid-hmacWithSHA1
-        // Per RFC 8018 s5.2, omit the prf field when the algorithm is
-        // the default (HmacSHA1) to produce correct DER encoding.
+        // HmacSHA1 is the default and must not be encoded.
         if (!kdfAlgo_OID.equals(ObjectIdentifier.of(KnownOIDs.HmacSHA1))) {
             DerOutputStream prf = new DerOutputStream();
             // algorithm is id-hmacWith<MD>
