@@ -46,7 +46,12 @@ public final class ExtendedRandom {
     private ExtendedRandom(String algName, OpenJCEPlusProvider provider) throws NativeException {
         this.algName = algName;
         this.provider = provider;
+        System.out.println("ExtendedRandom constructor: algName=" + algName
+                + " provider=" + provider.getName()
+                + " isFIPS=" + provider.isFIPS()
+                + " thread=" + Thread.currentThread().getName());
         this.nativeInterface = NativeCryptoSelector.selectBackend(provider, "SecureRandom", algName + "DRBG");
+        System.out.println("ExtendedRandom constructor: selected backend=" + this.nativeInterface.getClass().getName());
     }
 
     private PRNGContextPointer getThreadLocalPRNGContext() throws NativeException {
@@ -67,8 +72,15 @@ public final class ExtendedRandom {
 
         prngCtx = prngCtxBuffer.get();
         if (prngCtx == null) {
+            System.out.println("ExtendedRandom: no ThreadLocal PRNG context for algName=" + this.algName
+                    + " thread=" + Thread.currentThread().getName()
+                    + " - creating new PRNGContextPointer");
             prngCtx = new PRNGContextPointer(this.algName, this.nativeInterface, this.provider);
             prngCtxBuffer.set(prngCtx);
+        } else {
+            System.out.println("ExtendedRandom: reusing ThreadLocal PRNG context ctxId=" + prngCtx.getCtx()
+                    + " algName=" + this.algName
+                    + " thread=" + Thread.currentThread().getName());
         }
 
         return prngCtx;
@@ -129,7 +141,13 @@ public final class ExtendedRandom {
         final long prngCtx;
 
         PRNGContextPointer(String algName, NativeInterface nativeInterface, OpenJCEPlusProvider provider) throws NativeException {
+            System.out.println("PRNGContextPointer: calling EXTRAND_create algName=" + algName
+                    + " nativeInterface=" + nativeInterface.getClass().getName()
+                    + " thread=" + Thread.currentThread().getName());
             this.prngCtx = nativeInterface.EXTRAND_create(algName);
+            System.out.println("PRNGContextPointer: EXTRAND_create succeeded ctxId=" + this.prngCtx
+                    + " algName=" + algName
+                    + " thread=" + Thread.currentThread().getName());
             provider.registerCleanable(this, ExtendedRandom.cleanOCKResources(this.prngCtx, nativeInterface));
         }
 
