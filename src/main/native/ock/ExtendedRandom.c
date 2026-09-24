@@ -42,11 +42,7 @@ Java_com_ibm_crypto_plus_provider_ock_NativeOCKImplementation_EXTRAND_1create(
     if (algNameChars == NULL) {
         throwOCKException(env, 0, "GetStringUTFChars() failed");
     } else {
-#ifdef DEBUG_EXTENDED_RANDOM_DETAIL
-        if (debug) {
-            gslogMessage("DETAIL_EXT_RANDOM algName=%s", algNameChars);
-        }
-#endif
+            gslogMessage("TAOTAO DETAIL_EXT_RANDOM algName=%s", algNameChars);
 
         ockPRNG = ICC_get_RNGbyname(ockCtx, algNameChars);
         if (ockPRNG == NULL) {
