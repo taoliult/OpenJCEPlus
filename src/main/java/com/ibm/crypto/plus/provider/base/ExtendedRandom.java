@@ -141,9 +141,19 @@ public final class ExtendedRandom {
         final long prngCtx;
 
         PRNGContextPointer(String algName, NativeInterface nativeInterface, OpenJCEPlusProvider provider) throws NativeException {
+            StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+            StringBuilder caller = new StringBuilder();
+            for (StackTraceElement frame : stack) {
+                String cls = frame.getClassName();
+                if (cls.startsWith("ibm.jceplus.junit")) {
+                    caller.append(" <- ").append(cls).append(".").append(frame.getMethodName())
+                          .append("(").append(frame.getFileName()).append(":").append(frame.getLineNumber()).append(")");
+                }
+            }
             System.out.println("PRNGContextPointer: calling EXTRAND_create algName=" + algName
                     + " nativeInterface=" + nativeInterface.getClass().getName()
-                    + " thread=" + Thread.currentThread().getName());
+                    + " thread=" + Thread.currentThread().getName()
+                    + (caller.length() > 0 ? " callers=" + caller : ""));
             this.prngCtx = nativeInterface.EXTRAND_create(algName);
             System.out.println("PRNGContextPointer: EXTRAND_create succeeded ctxId=" + this.prngCtx
                     + " algName=" + algName
